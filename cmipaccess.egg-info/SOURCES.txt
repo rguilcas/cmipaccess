@@ -1,0 +1,12 @@
+setup.py
+cmipaccess.egg-info/PKG-INFO
+cmipaccess.egg-info/SOURCES.txt
+cmipaccess.egg-info/dependency_links.txt
+cmipaccess.egg-info/not-zip-safe
+cmipaccess.egg-info/top_level.txt
+cmipspirit/CMIP_data_access.py
+cmipspirit/CMIP_find_available.py
+cmipspirit/CMIP_path_search.py
+cmipspirit/__init__.py
+cmipspirit/esgf_data_access.py
+cmipspirit/tools.py

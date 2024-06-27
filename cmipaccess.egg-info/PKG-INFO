@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: cmipaccess
+Version: 0.3
+Summary: Easy access to CMIP5 and CMIP6 data from ESGF and Spirit
+Home-page: #
+Author: Robin Guillaume-Castel
+Author-email: r.guilcas@outlook.com
+License: MIT
