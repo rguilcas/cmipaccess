@@ -10,6 +10,20 @@ import pandas as pd
 from .constants import GLOBAL_MEAN_DATA_DIR    
 
 def get_global_time_series(model, experiment, variable, realisation, **kwargs):
+    """Return an xarray Dataset containing a global mean time series of the variable required.
+
+    Args:
+        model (str): Climate model
+        experiment (str): Experiment id
+        variable (str): variable name
+        realisation (str): member id
+
+    Raises:
+        ValueError: An error is raised if the global mean data is not found on spiritX.
+
+    Returns:
+        xarray.Dataset: _description_
+    """
     file = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/Models/*/{model}/{experiment}/{realisation}/{variable}_*")
     if len(file)==0:
         raise ValueError('Global mean data not readily available on spiritx')
