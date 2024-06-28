@@ -86,17 +86,22 @@ def download_multi_variables_timeseries(model,
                                         overwrite = False,
                                         **kwargs):
     for variable in variables:
-        download_single_timeseries(model, 
-                                   experiment, 
-                                   realisation, 
-                                   variable,
-                                   grid=grid,
-                                   freq=freq,
-                                   source = source,
-                                   esgf_fallback=esgf_fallback,
-                                   generation=generation,
-                                   overwrite = overwrite,
-                                   **kwargs)
+        try:
+            download_single_timeseries(model, 
+                                    experiment, 
+                                    realisation, 
+                                    variable,
+                                    grid=grid,
+                                    freq=freq,
+                                    source = source,
+                                    esgf_fallback=esgf_fallback,
+                                    generation=generation,
+                                    overwrite = overwrite,
+                                    **kwargs)
+        except Exception as e:
+            print(f"   !!FAIL !! {model} {experiment} {realisation} {variable} ")
+            print(e)
+            print('')
 
 def download_all_realisations_one_model(model, 
                                         experiment, 
@@ -128,15 +133,15 @@ def download_all_realisations_one_model(model,
                                             **kwargs)
 
 
-def download_all_realisations_all_model(experiment, 
-                                        *variables,
-                                        grid=None,
-                                        freq='mon',
-                                        source = 'spiritx',
-                                        esgf_fallback=True,
-                                        generation='CMIP6',
-                                        overwrite = False,
-                                        **kwargs):
+def download_all_realisations_all_models(experiment, 
+                                         *variables,
+                                         grid=None,
+                                         freq='mon',
+                                         source = 'spiritx',
+                                         esgf_fallback=True,
+                                         generation='CMIP6',
+                                         overwrite = False,
+                                         **kwargs):
     
     models = esgf.find_models_experiment(experiment, 
                                          variable='tas',

@@ -86,17 +86,22 @@ def download_multi_variables_timeseries(model,
                                         overwrite = False,
                                         **kwargs):
     for variable in variables:
-        download_single_timeseries(model, 
-                                   experiment, 
-                                   realisation, 
-                                   variable,
-                                   grid=grid,
-                                   freq=freq,
-                                   source = source,
-                                   esgf_fallback=esgf_fallback,
-                                   generation=generation,
-                                   overwrite = overwrite,
-                                   **kwargs)
+        try:
+            download_single_timeseries(model, 
+                                    experiment, 
+                                    realisation, 
+                                    variable,
+                                    grid=grid,
+                                    freq=freq,
+                                    source = source,
+                                    esgf_fallback=esgf_fallback,
+                                    generation=generation,
+                                    overwrite = overwrite,
+                                    **kwargs)
+        except Exception as e:
+            print(f"   !!FAIL !! {model} {experiment} {realisation} {variable} ")
+            print(e)
+            print('')
 
 def download_all_realisations_one_model(model, 
                                         experiment, 
