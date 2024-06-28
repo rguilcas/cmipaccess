@@ -4,8 +4,8 @@ import glob
 
 def get_path_CMIP_data(model, 
                        experiment, 
-                       realisation, 
                        variable,
+                       realisation, 
                        grid=None,
                        generation=None,
                        freq='mon'):

@@ -15,14 +15,26 @@ from cmipaccess.tools import sort_realisations
 
 def download_single_timeseries(model, 
                                experiment, 
-                               realisation, 
                                variable,
+                               realisation, 
                                grid=None,
                                freq='mon',
                                source = 'spiritx',
                                esgf_fallback=True,
-                               generation=None,
+                               generation='CMIP6',
+                               overwrite = False,
                                **kwargs):
+    # See if file already exists
+    path_out = f"{GLOBAL_MEAN_DATA_DIR}/Models/{generation}/{model}/{experiment}/{realisation}"
+    if os.path.exists(path_out):
+        path_out_exists = True
+        path_out_file = glob.glob(f"{path_out}/{variable}_*")
+        if len(path_out_file)!=0 and not overwrite:
+            print("File already exists. Add overwrite=True, to overwrite it")
+            return
+    else:
+        path_out_exists = False
+    # Find data file
     path_data = cmip.get_path_CMIP_data(model, 
                                         experiment, 
                                         realisation, 
@@ -31,13 +43,36 @@ def download_single_timeseries(model,
                                         freq=freq,
                                         source = source,
                                         esgf_fallback=esgf_fallback,
-                                        generation=generation)    
+                                        generation=generation)
+    if not path_out_exists : 
+        os.makedirs(path_out)
     data_experiment = xr.open_mfdataset(path_data, **kwargs)
-    return data_experiment
-
-
-
-
+    # Find area file
+    grid_label = data_experiment.grid_label
+    table_id = data_experiment.table_id
+    if table_id=='Amon':
+        table_grid = 'fx'
+        area_var = 'areacella'
+    elif table_id=='Omon':
+        table_grid='Ofx'
+        area_var = 'areacello'
+    path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/{experiment}/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+    if len(path_list_to_area) == 0:
+        path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/piControl/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+        if len(path_list_to_area) == 0:
+            path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/*/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+            if len(path_list_to_area) == 0:
+                path_list_to_area = glob.glob(f"/bdd/CMIP6/*/*/{model}/*/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+    area_path = path_list_to_area[0]
+    area = xr.open_dataset(area_path)[area_var].fillna(0)
+    averaging_dims = area.dims
+    # Compute global average
+    data_global_mean = data_experiment[[variable]].weighted(area).mean(averaging_dims, keep_attrs=True)
+    # Save data
+    year_start, year_end = data_global_mean.time.dt.year.values[[0,-1]]
+    out_name = f"{variable}_{table_id}_{model}_{experiment}_{realisation}_{grid_label}_{year_start}_{year_end}.nc"
+    data_global_mean.to_netcdf(f"{path_out}/{out_name}")
+    return 
 
 # def download_full_experiment_all_model(experiment, *variables, 
 #                                        no_parent=False, table = None, 
