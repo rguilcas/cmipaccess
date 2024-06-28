@@ -1,0 +1,14 @@
+name: 
+  - cmipaccess
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.8
+  - esgf-pyclient>=0.3
+  - pip>=20.1  # pip is needed as dependency
+  - pip:
+      - sphinx_rtd_theme
+      - sphinx-mdinclude
+      - nbsphinx          
+      
