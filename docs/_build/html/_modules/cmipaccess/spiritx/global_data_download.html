@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cmipaccess.spiritx.global_data_download &#8212; cmipaccess 0.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cmipaccess.spiritx.global_data_download</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">cmath</span> <span class="kn">import</span> <span class="n">exp</span>
+<span class="kn">import</span> <span class="nn">cmipaccess.esgf</span> <span class="k">as</span> <span class="nn">esgf</span>
+<span class="kn">import</span> <span class="nn">cmipaccess.spiritx</span> <span class="k">as</span> <span class="nn">spiritx</span>
+<span class="kn">import</span> <span class="nn">cmipaccess</span> <span class="k">as</span> <span class="nn">cmip</span>
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">GLOBAL_MEAN_DATA_DIR</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span> 
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">xr</span><span class="o">.</span><span class="n">SerializationWarning</span><span class="p">)</span> 
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">cmipaccess.tools</span> <span class="kn">import</span> <span class="n">sort_realisations</span>
+
+
+<div class="viewcode-block" id="download_single_timeseries">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_single_timeseries">[docs]</a>
+<span class="k">def</span> <span class="nf">download_single_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                               <span class="n">experiment</span><span class="p">,</span> 
+                               <span class="n">realisation</span><span class="p">,</span> 
+                               <span class="n">variable</span><span class="p">,</span>
+                               <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                               <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                               <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                               <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># See if file already exists</span>
+    <span class="n">path_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GLOBAL_MEAN_DATA_DIR</span><span class="si">}</span><span class="s2">/Models/</span><span class="si">{</span><span class="n">generation</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_out</span><span class="p">):</span>
+        <span class="n">path_out_exists</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">path_out_file</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_out</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_out_file</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File already exists. Add overwrite=True, to overwrite it&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path_out_exists</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># Find data file</span>
+    <span class="n">path_data</span> <span class="o">=</span> <span class="n">cmip</span><span class="o">.</span><span class="n">get_path_CMIP_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="n">realisation</span><span class="p">,</span> 
+                                        <span class="n">variable</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                        <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                        <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                        <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path_out_exists</span> <span class="p">:</span> 
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
+    <span class="n">data_experiment</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># Find area file</span>
+    <span class="n">grid_label</span> <span class="o">=</span> <span class="n">data_experiment</span><span class="o">.</span><span class="n">grid_label</span>
+    <span class="n">table_id</span> <span class="o">=</span> <span class="n">data_experiment</span><span class="o">.</span><span class="n">table_id</span>
+    <span class="k">if</span> <span class="n">table_id</span><span class="o">==</span><span class="s1">&#39;Amon&#39;</span><span class="p">:</span>
+        <span class="n">table_grid</span> <span class="o">=</span> <span class="s1">&#39;fx&#39;</span>
+        <span class="n">area_var</span> <span class="o">=</span> <span class="s1">&#39;areacella&#39;</span>
+    <span class="k">elif</span> <span class="n">table_id</span><span class="o">==</span><span class="s1">&#39;Omon&#39;</span><span class="p">:</span>
+        <span class="n">table_grid</span><span class="o">=</span><span class="s1">&#39;Ofx&#39;</span>
+        <span class="n">area_var</span> <span class="o">=</span> <span class="s1">&#39;areacello&#39;</span>
+    <span class="n">path_list_to_area</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP6/CMIP/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">/*/</span><span class="si">{</span><span class="n">table_grid</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">area_var</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">grid_label</span><span class="si">}</span><span class="s2">/latest/*&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_area</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">path_list_to_area</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP6/CMIP/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/piControl/*/</span><span class="si">{</span><span class="n">table_grid</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">area_var</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">grid_label</span><span class="si">}</span><span class="s2">/latest/*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_area</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">path_list_to_area</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP6/CMIP/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/*/*/</span><span class="si">{</span><span class="n">table_grid</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">area_var</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">grid_label</span><span class="si">}</span><span class="s2">/latest/*&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_area</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">path_list_to_area</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP6/*/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/*/*/</span><span class="si">{</span><span class="n">table_grid</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">area_var</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">grid_label</span><span class="si">}</span><span class="s2">/latest/*&quot;</span><span class="p">)</span>
+    <span class="n">area_path</span> <span class="o">=</span> <span class="n">path_list_to_area</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">area_path</span><span class="p">)[</span><span class="n">area_var</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">averaging_dims</span> <span class="o">=</span> <span class="n">area</span><span class="o">.</span><span class="n">dims</span>
+    <span class="c1"># Compute global average</span>
+    <span class="n">data_global_mean</span> <span class="o">=</span> <span class="n">data_experiment</span><span class="p">[[</span><span class="n">variable</span><span class="p">]]</span><span class="o">.</span><span class="n">weighted</span><span class="p">(</span><span class="n">area</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">averaging_dims</span><span class="p">,</span> <span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Save data</span>
+    <span class="n">year_start</span><span class="p">,</span> <span class="n">year_end</span> <span class="o">=</span> <span class="n">data_global_mean</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">values</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">out_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grid_label</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">year_start</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">year_end</span><span class="si">}</span><span class="s2">.nc&quot;</span>
+    <span class="n">data_global_mean</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_out</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    --&gt; File saved: </span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> </div>
+
+
+<div class="viewcode-block" id="download_multi_variables_timeseries">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_multi_variables_timeseries">[docs]</a>
+<span class="k">def</span> <span class="nf">download_multi_variables_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="n">realisation</span><span class="p">,</span> 
+                                        <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                                        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                                        <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                                        <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">download_single_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                   <span class="n">experiment</span><span class="p">,</span> 
+                                   <span class="n">realisation</span><span class="p">,</span> 
+                                   <span class="n">variable</span><span class="p">,</span>
+                                   <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                   <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                   <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                   <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                   <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">,</span>
+                                   <span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="download_all_realisations_one_model">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_all_realisations_one_model">[docs]</a>
+<span class="k">def</span> <span class="nf">download_all_realisations_one_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                                        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                                        <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                                        <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    
+    <span class="n">realisations</span> <span class="o">=</span> <span class="n">esgf</span><span class="o">.</span><span class="n">find_realisations_experiment</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                                     <span class="n">experiment</span><span class="p">,</span>
+                                                     <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;tas&#39;</span><span class="p">,</span>
+                                                     <span class="n">table</span><span class="o">=</span><span class="s1">&#39;Amon&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">realisations</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> files ...&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">realisation</span> <span class="ow">in</span> <span class="n">realisations</span><span class="p">:</span> 
+        <span class="n">download_multi_variables_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                            <span class="n">experiment</span><span class="p">,</span> 
+                                            <span class="n">realisation</span><span class="p">,</span> 
+                                            <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                            <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                            <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                            <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">,</span>
+                                            <span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="download_all_realisations_all_model">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_all_realisations_all_model">[docs]</a>
+<span class="k">def</span> <span class="nf">download_all_realisations_all_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                                        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                                        <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                                        <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    
+    <span class="n">realisations</span> <span class="o">=</span> <span class="n">esgf</span><span class="o">.</span><span class="n">find_realisations_experiment</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                                     <span class="n">experiment</span><span class="p">,</span>
+                                                     <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;tas&#39;</span><span class="p">,</span>
+                                                     <span class="n">table</span><span class="o">=</span><span class="s1">&#39;Amon&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">realisations</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> files ...&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">realisation</span> <span class="ow">in</span> <span class="n">realisations</span><span class="p">:</span> 
+        <span class="n">download_multi_variables_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                            <span class="n">experiment</span><span class="p">,</span> 
+                                            <span class="n">realisation</span><span class="p">,</span> 
+                                            <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                            <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                            <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                            <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">,</span>
+                                            <span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="c1"># def download_full_experiment_all_model(experiment, *variables, </span>
+<span class="c1">#                                        no_parent=False, table = None, </span>
+<span class="c1">#                                        progress = None):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     progress can be None, realisation, variable, both</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     models = find_models_experiment(experiment)</span>
+<span class="c1">#     for model in models[1:]:</span>
+<span class="c1">#         print(model)</span>
+<span class="c1">#         realisations = find_realisations_experiment(model, experiment)</span>
+<span class="c1">#         fails = []</span>
+<span class="c1">#         if progress in [&#39;variable&#39;,&#39;both&#39;]:</span>
+<span class="c1">#             variables = tqdm(variables)</span>
+<span class="c1">#         if progress in [&#39;realisation&#39;,&#39;both&#39;]:</span>
+<span class="c1">#             realisations = tqdm(realisations)</span>
+        
+<span class="c1">#         for realisation in realisations:</span>
+<span class="c1">#             for variable in variables:</span>
+<span class="c1">#                 print(variable)</span>
+<span class="c1">#                 real = DetrendedRealisation(model, experiment, realisation, variable)</span>
+<span class="c1">#                 try:</span>
+<span class="c1">#                     real.save_global_mean_remote_data()</span>
+<span class="c1">#                 except:</span>
+<span class="c1">#                     fails.append(f&quot;{model} {realisation} {variable} global mean data&quot;)</span>
+<span class="c1">#                 if not no_parent:</span>
+<span class="c1">#                     try:</span>
+<span class="c1">#                         real.save_global_mean_detrended_run()</span>
+<span class="c1">#                     except:</span>
+<span class="c1">#                         fails.append(f&quot;{model} {realisation} {variable} global mean detrended data&quot;)</span>
+<span class="c1">#         print(f&quot;--------- {len(fails)}/{len(variables)*len(realisations)} failed processes  --------&quot;)</span>
+<span class="c1">#         for k in fails:</span>
+<span class="c1">#             print(&#39;    &#39;+k)</span>
+
+<span class="c1"># def download_full_experiment_one_model(model, experiment, *variables, </span>
+<span class="c1">#                                        no_parent=False, table = None, </span>
+<span class="c1">#                                        progress = None):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     progress can be None, realisation, variable, both</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     realisations = find_realisations_experiment(model, experiment)</span>
+<span class="c1">#     fails = []</span>
+<span class="c1">#     if progress in [&#39;variable&#39;,&#39;both&#39;]:</span>
+<span class="c1">#         variables = tqdm(variables)</span>
+<span class="c1">#     if progress in [&#39;realisation&#39;,&#39;both&#39;]:</span>
+<span class="c1">#         realisations = tqdm(realisations)</span>
+    
+<span class="c1">#     for realisation in realisations:</span>
+<span class="c1">#         for variable in variables:</span>
+<span class="c1">#             real = DetrendedRealisation(model, experiment, realisation, variable)</span>
+<span class="c1">#             try:</span>
+<span class="c1">#                 real.save_global_mean_remote_data()</span>
+<span class="c1">#             except:</span>
+<span class="c1">#                 fails.append(f&quot;{model} {realisation} {variable} global mean data&quot;)</span>
+<span class="c1">#             if not no_parent:</span>
+<span class="c1">#                 try:</span>
+<span class="c1">#                     real.save_global_mean_detrended_run()</span>
+<span class="c1">#                 except:</span>
+<span class="c1">#                     fails.append(f&quot;{model} {realisation} {variable} global mean detrended data&quot;)</span>
+<span class="c1">#     print(f&quot;--------- {len(fails)}/{len(variables)*len(realisations)} failed processes  --------&quot;)</span>
+<span class="c1">#     for k in fails:</span>
+<span class="c1">#         print(&#39;    &#39;+k)</span>
+    
+    <span class="c1"># print(realisations)</span>
+
+
+<span class="c1"># def download_full_experiment_global_mean_data(experiment,</span>
+<span class="c1">#                                               *variables,</span>
+<span class="c1">#                                               table=&#39;Amon&#39;,</span>
+<span class="c1">#                                               grid=None, </span>
+<span class="c1">#                                               source=&#39;climserv&#39;,</span>
+<span class="c1">#                                               esgf_fallback=True,</span>
+<span class="c1">#                                               override=False,</span>
+<span class="c1">#                                               force_grid_weights=False):</span>
+<span class="c1">#     models = find_models_experiment(experiment)</span>
+<span class="c1">#     n_models = len(models)</span>
+<span class="c1">#     print(f&quot;-\| {n_models} MODELS FOUND FOR {experiment} |/-&quot;)</span>
+<span class="c1">#     for k, model in enumerate(models):</span>
+<span class="c1">#         print(f&#39;\n   {k+1}/{n_models} DOWNLOADING {model.upper()}...&#39;)</span>
+<span class="c1">#         download_multiple_remote_global_mean_data(model, </span>
+<span class="c1">#                                                   experiment,</span>
+<span class="c1">#                                                  *variables,</span>
+<span class="c1">#                                                   table=table,</span>
+<span class="c1">#                                                   grid=grid, </span>
+<span class="c1">#                                                   source=source,</span>
+<span class="c1">#                                                   esgf_fallback=esgf_fallback,</span>
+<span class="c1">#                                                   override=override,</span>
+<span class="c1">#                                                   force_grid_weights=force_grid_weights)    </span>
+
+<span class="c1"># def download_multiple_remote_global_mean_data(model, </span>
+<span class="c1">#                                               experiment,</span>
+<span class="c1">#                                               *variables,</span>
+<span class="c1">#                                               table=&#39;Amon&#39;,</span>
+<span class="c1">#                                               grid=None, </span>
+<span class="c1">#                                               source=&#39;climserv&#39;,</span>
+<span class="c1">#                                               esgf_fallback=True,</span>
+<span class="c1">#                                               override=False,</span>
+<span class="c1">#                                               force_grid_weights=False):</span>
+<span class="c1">#     realisations = find_relisations_experiment(experiment, model)</span>
+<span class="c1">#     n_real = len(realisations)</span>
+<span class="c1">#     print(f&#39;{n_real} realisations on ESGF&#39;)</span>
+<span class="c1">#     for k,realisation in enumerate(realisations):</span>
+<span class="c1">#         print(f&#39;{k+1}/{n_real}: {realisation} downloading ...&#39;)</span>
+<span class="c1">#         for variable in variables:</span>
+<span class="c1">#             try:</span>
+<span class="c1">#                 _ = download_remote_global_mean_data(model, </span>
+<span class="c1">#                                                         experiment,</span>
+<span class="c1">#                                                         realisation,</span>
+<span class="c1">#                                                         variable,</span>
+<span class="c1">#                                                         table=table,</span>
+<span class="c1">#                                                         grid=grid,</span>
+<span class="c1">#                                                         source=source,</span>
+<span class="c1">#                                                         esgf_fallback=esgf_fallback,</span>
+<span class="c1">#                                                         override=override,</span>
+<span class="c1">#                                                         force_grid_weights=force_grid_weights)</span>
+<span class="c1">#             except Exception as e:</span>
+<span class="c1">#                 print(e)</span>
+    
+
+<span class="c1"># def download_remote_global_mean_data(model,</span>
+<span class="c1">#                                     experiment,</span>
+<span class="c1">#                                     realisation,</span>
+<span class="c1">#                                     variable,</span>
+<span class="c1">#                                     table=&#39;Amon&#39;,grid=None,</span>
+<span class="c1">#                                     source=&#39;climserv&#39;,esgf_fallback=True,</span>
+<span class="c1">#                                     xr_kwargs = dict(),</span>
+<span class="c1">#                                     download=True,</span>
+<span class="c1">#                                     override=False,</span>
+<span class="c1">#                                     force_grid_weights=False):</span>
+<span class="c1">#     print(model, realisation, experiment, variable)</span>
+<span class="c1">#     local_path = f&#39;{get_local_model_path(model)}/{experiment}/{realisation}&#39;</span>
+<span class="c1">#     if not os.path.exists(local_path):</span>
+<span class="c1">#         os.makedirs(local_path)</span>
+<span class="c1">#     if len(glob.glob(f&quot;{local_path}/{variable}_*&quot;)) == 0 or override:</span>
+<span class="c1">#         remote_data, remote_paths = get_remote_data(model, </span>
+<span class="c1">#                                                     experiment, </span>
+<span class="c1">#                                                     realisation, </span>
+<span class="c1">#                                                     variable,</span>
+<span class="c1">#                                                     table=table,grid=grid,</span>
+<span class="c1">#                                                     source = source,</span>
+<span class="c1">#                                                     esgf_fallback=esgf_fallback,</span>
+<span class="c1">#                                                     xr_kwargs = xr_kwargs)</span>
+<span class="c1">#         if force_grid_weights:</span>
+<span class="c1">#             weights = np.cos(np.deg2rad(remote_data.lat))</span>
+<span class="c1">#             global_mean_data = remote_data[variable].weighted(weights).mean([&#39;lon&#39;,&#39;lat&#39;], keep_attrs=True).to_dataset()</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             weights = get_area(model, table=table)</span>
+<span class="c1">#             global_mean_data = remote_data[variable].weighted(weights).mean(weights.dims, keep_attrs=True).to_dataset()</span>
+<span class="c1">#         global_mean_data.attrs = remote_data.attrs</span>
+
+
+<span class="c1">#         if download:</span>
+<span class="c1">#             ds_name = &#39;_&#39;.join(remote_paths[0].split(&#39;/&#39;)[-1].split(&#39;_&#39;)[:-1] + \</span>
+<span class="c1">#                                             [f&quot;{global_mean_data.time.dt.year.values[0]:04d}-{global_mean_data.time.dt.year.values[-1]:04d}.nc&quot;])</span>
+<span class="c1">#             if ds_name not in os.listdir(local_path) or override:</span>
+<span class="c1">#                 global_mean_data.to_netcdf(f&quot;{local_path}/{ds_name}&quot;)</span>
+<span class="c1">#                 global_mean_data.close()</span>
+
+
+<span class="c1">#         return global_mean_data</span>
+
+<span class="c1"># def get_remote_data(model, </span>
+<span class="c1">#                     experiment, </span>
+<span class="c1">#                     realisation, </span>
+<span class="c1">#                     variable,</span>
+<span class="c1">#                     table=&#39;Amon&#39;,grid=None,</span>
+<span class="c1">#                     source = &#39;climserv&#39;,</span>
+<span class="c1">#                     esgf_fallback=True,</span>
+<span class="c1">#                     xr_kwargs = dict()):</span>
+
+<span class="c1">#     remote_paths = get_remote_path(model, </span>
+<span class="c1">#                                    experiment, </span>
+<span class="c1">#                                    realisation, </span>
+<span class="c1">#                                    variable,</span>
+<span class="c1">#                                    table=table,grid=grid,</span>
+<span class="c1">#                                    source = source,</span>
+<span class="c1">#                                    esgf_fallback=esgf_fallback)</span>
+<span class="c1">#     if &#39;/bdd&#39; not in remote_paths[0]:</span>
+<span class="c1">#         ds = xr.open_mfdataset(remote_paths,engine=&#39;pydap&#39;, **xr_kwargs)</span>
+<span class="c1">#         return ds, remote_paths</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         ds = xr.open_mfdataset(remote_paths, **xr_kwargs)</span>
+<span class="c1">#     return ds, remote_paths</span>
+
+<span class="c1"># def get_local_model_path(model):</span>
+<span class="c1">#     return f&quot;{EMC2_DATA_DIR}/Models/CMIP6/{model}&quot;</span>
+
+<span class="c1"># def get_area(model, table=&#39;Amon&#39;, grid=None):</span>
+<span class="c1">#     if table == &#39;Amon&#39;:</span>
+<span class="c1">#         area_variable = &#39;areacella&#39;</span>
+<span class="c1">#         area_table = &quot;fx&quot;</span>
+<span class="c1">#     elif table == &#39;Omon&#39;:</span>
+<span class="c1">#         area_variable = &#39;areacello&#39;</span>
+<span class="c1">#         area_table = &quot;Ofx&quot;</span>
+<span class="c1">#     local_model_path = get_local_model_path(model)</span>
+<span class="c1">#     if grid is None:</span>
+<span class="c1">#         area_local_name = f&quot;{model}_{area_variable}_*.nc&quot;</span>
+<span class="c1">#         area_path = glob.glob(f&quot;{local_model_path}/{area_local_name}&quot;)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         area_local_name = f&quot;{model}_{area_variable}_{grid}.nc&quot;</span>
+<span class="c1">#         area_path = glob.glob(f&quot;{local_model_path}/{area_local_name}&quot;)</span>
+<span class="c1">#     if len(area_path) == 0:</span>
+<span class="c1">#         print(&#39;Downloading the cell area file&#39;)</span>
+<span class="c1">#         download_area(model, area_variable, area_table, grid=grid)</span>
+<span class="c1">#     if grid is None:</span>
+<span class="c1">#         area_local_name = f&quot;{model}_{area_variable}*.nc&quot;</span>
+<span class="c1">#         area_path = glob.glob(f&quot;{local_model_path}/{area_local_name}&quot;)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         area_local_name = f&quot;{model}_{area_variable}_{grid}.nc&quot;</span>
+<span class="c1">#         area_path = glob.glob(f&quot;{local_model_path}/{area_local_name}&quot;)</span>
+<span class="c1">#     with xr.open_dataset(area_path[0])[area_variable] as area_data:</span>
+<span class="c1">#         area = area_data.copy()</span>
+<span class="c1">#         return area</span>
+
+
+<span class="c1"># def download_area(model,area_variable,area_table, experiment=&#39;piControl&#39;,grid=None):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Attention trouve le path sans préciser de réalisation</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     finder = find_relisations_experiment(&#39;piControl&#39;,model,</span>
+<span class="c1">#                                           variable=area_variable,</span>
+<span class="c1">#                                           table=area_table)</span>
+<span class="c1">#     area_path = get_remote_path(model, experiment,finder[0], area_variable, table=area_table)[0]</span>
+<span class="c1">#     area_label =  area_path.split(&#39;/&#39;)[-3]</span>
+<span class="c1">#     area_name = f&#39;{model}_{area_variable}_{area_label}.nc&#39;</span>
+<span class="c1">#     local_model_path = get_local_model_path(model)</span>
+
+<span class="c1">#     with xr.open_dataset(area_path) as area:</span>
+<span class="c1">#         area.to_netcdf(f&quot;{local_model_path}/{area_name}&quot;)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">cmipaccess</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cmipaccess</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Robin Guillaume-Castel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

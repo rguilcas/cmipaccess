@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cmipaccess.esgf.path_search &#8212; cmipaccess 0.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cmipaccess.esgf.path_search</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.esgf_data_access</span> <span class="kn">import</span> <span class="n">esgf_search</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+
+<div class="viewcode-block" id="get_path_CMIP_data">
+<a class="viewcode-back" href="../../../cmipaccess.esgf.html#cmipaccess.esgf.path_search.get_path_CMIP_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_path_CMIP_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                       <span class="n">experiment</span><span class="p">,</span> 
+                       <span class="n">realisation</span><span class="p">,</span> 
+                       <span class="n">variable</span><span class="p">,</span>
+                       <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                       <span class="n">latest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">generation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns path to access gridded CMIP data from either CMIP5 or CMIP6</span>
+
+<span class="sd">    grid : default is &#39;gn&#39; native grid, only for CMIP6</span>
+<span class="sd">    freq : can be &#39;mon&#39;, &#39;day&#39;, &#39;3h&#39; or else, see CMIP documentation</span>
+<span class="sd">    source : can be &#39;spirit&#39; for local access or &#39;esgf&#39; for remote access</span>
+<span class="sd">    esgf_fallback : if source is &#39;spirit&#39; but the dataset is not found, tries to get remote data from esgf</span>
+<span class="sd">    generation : specify the generation wanted : either &#39;CMIP5&#39; or &#39;CMIP6&#39;. If None, it tries CMIP6 first then CMIP5 which can be slower. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">generation</span> <span class="o">==</span> <span class="s1">&#39;CMIP6&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                   <span class="n">experiment</span><span class="p">,</span> 
+                                   <span class="n">realisation</span><span class="p">,</span> 
+                                   <span class="n">variable</span><span class="p">,</span>
+                                   <span class="n">latest</span><span class="o">=</span><span class="n">latest</span><span class="p">,</span>
+                                   <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                   <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">generation</span> <span class="o">==</span> <span class="s1">&#39;CMIP5&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                   <span class="n">experiment</span><span class="p">,</span> 
+                                   <span class="n">realisation</span><span class="p">,</span> 
+                                   <span class="n">variable</span><span class="p">,</span>
+                                   <span class="n">latest</span><span class="o">=</span><span class="n">latest</span><span class="p">,</span>
+                                   <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">generation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="n">realisation</span><span class="p">,</span> 
+                                        <span class="n">variable</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                        <span class="n">latest</span><span class="o">=</span><span class="n">latest</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">paths</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span> 
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">get_path_CMIP5_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="n">realisation</span><span class="p">,</span> 
+                                        <span class="n">variable</span><span class="p">,</span>
+                                        <span class="n">latest</span><span class="o">=</span><span class="n">latest</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">paths</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Data not found&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Generation can only be None, &#39;CMIP5&#39; or &#39;CMIP6&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#########################</span>
+<span class="c1">#        CMIP6          #</span>
+<span class="c1">#########################</span>
+
+<div class="viewcode-block" id="get_path_CMIP6_data">
+<a class="viewcode-back" href="../../../cmipaccess.esgf.html#cmipaccess.esgf.path_search.get_path_CMIP6_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                        <span class="n">experiment</span><span class="p">,</span> 
+                        <span class="n">realisation</span><span class="p">,</span> 
+                        <span class="n">variable</span><span class="p">,</span>
+                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span> 
+                        <span class="n">latest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>        
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the remote ESGF path to the corresponding datasets they exist on ESGF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+         <span class="c1"># Checks model availability</span>
+        <span class="n">all_paths</span> <span class="o">=</span> <span class="n">esgf_search</span><span class="p">(</span><span class="n">variable_id</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span>
+                                <span class="n">experiment_id</span><span class="o">=</span><span class="n">experiment</span><span class="p">,</span> 
+                                <span class="n">member_id</span><span class="o">=</span><span class="n">realisation</span><span class="p">,</span>
+                                <span class="n">frequency</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                <span class="n">source_id</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                                <span class="n">latest</span><span class="o">=</span><span class="n">latest</span><span class="p">,)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No such data exist on ESGF&quot;</span><span class="p">)</span>
+        <span class="c1"># select grid</span>
+        <span class="n">grids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">14</span><span class="p">]</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">grid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;gn&#39;</span> <span class="ow">in</span> <span class="n">grids</span><span class="p">:</span>
+                <span class="n">grid</span> <span class="o">=</span> <span class="s1">&#39;gn&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">grid</span> <span class="o">=</span> <span class="n">grids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">all_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">14</span><span class="p">]</span> <span class="o">==</span> <span class="n">grid</span><span class="p">]</span>
+        <span class="c1"># find longest source available</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span><span class="p">]</span>
+        <span class="n">list_durations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">dates_source</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span> <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates_source</span><span class="p">])</span>
+            <span class="n">list_durations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">longest_source</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">list_durations</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span> <span class="k">if</span> <span class="n">longest_source</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span></div>
+
+    
+
+
+<span class="c1">#########################</span>
+<span class="c1">#        CMIP5          #</span>
+<span class="c1">#########################</span>
+
+
+<div class="viewcode-block" id="get_path_CMIP5_data">
+<a class="viewcode-back" href="../../../cmipaccess.esgf.html#cmipaccess.esgf.path_search.get_path_CMIP5_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_path_CMIP5_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                        <span class="n">experiment</span><span class="p">,</span> 
+                        <span class="n">realisation</span><span class="p">,</span> 
+                        <span class="n">variable</span><span class="p">,</span>
+                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                        <span class="n">latest</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>        
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the remote ESGF path to the corresponding CMIP5 datasets they exist on ESGF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+         <span class="c1"># Checks model availability</span>
+        <span class="n">all_paths</span> <span class="o">=</span> <span class="n">esgf_search</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="s1">&#39;CMIP5&#39;</span><span class="p">,</span>
+                                <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span>
+                                <span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">,</span> 
+                                <span class="n">ensemble</span><span class="o">=</span><span class="n">realisation</span><span class="p">,</span>
+                                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                                <span class="n">time_frequency</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                <span class="n">latest</span><span class="o">=</span><span class="n">latest</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No such data exist on ESGF&quot;</span><span class="p">)</span>
+        <span class="c1"># find longest source available</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span><span class="p">]</span>
+        <span class="n">list_durations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">dates_source</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span> <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates_source</span><span class="p">])</span>
+            <span class="n">list_durations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="n">longest_source</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">list_durations</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_paths</span> <span class="k">if</span> <span class="n">longest_source</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span></div>
+
+        
+<div class="viewcode-block" id="print_list">
+<a class="viewcode-back" href="../../../cmipaccess.esgf.html#cmipaccess.esgf.path_search.print_list">[docs]</a>
+<span class="k">def</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">model_list</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">     &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">model</span><span class="si">:</span><span class="s1">&lt;30</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">model_list</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;.nc&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model</span><span class="p">]))</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">cmipaccess</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cmipaccess</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Robin Guillaume-Castel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

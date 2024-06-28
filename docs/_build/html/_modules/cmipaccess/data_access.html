@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cmipaccess.data_access &#8212; cmipaccess 0.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for cmipaccess.data_access</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">.path_search</span> <span class="kn">import</span> <span class="n">get_path_CMIP_data</span>
+
+
+
+<div class="viewcode-block" id="get_CMIP6_data">
+<a class="viewcode-back" href="../../cmipaccess.html#cmipaccess.data_access.get_CMIP6_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                   <span class="n">experiment</span><span class="p">,</span> 
+                   <span class="n">realisation</span><span class="p">,</span> 
+                   <span class="n">variable</span><span class="p">,</span>
+                   <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                   <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                   <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                   <span class="o">**</span><span class="n">xr_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads gridded CMIP6 data from spirit or esgf</span>
+
+<span class="sd">    grid : default is &#39;gn&#39; native grid</span>
+<span class="sd">    freq : can be &#39;mon&#39;, &#39;day&#39;, &#39;3h&#39;, ... See CMIP documentation</span>
+<span class="sd">    source : can be &#39;spiritx&#39; for local access or &#39;esgf&#39; for remote access</span>
+<span class="sd">    esgf_fallback : if source is &#39;spirit&#39; but the dataset is not found, tries to get remote data from esgf</span>
+<span class="sd">    xr_kwargs : keyword args passed to xarray open_mfdataset function that opens files (chunks, cftime, ...) </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="n">get_path_CMIP_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                               <span class="n">experiment</span><span class="p">,</span> 
+                               <span class="n">realisation</span><span class="p">,</span> 
+                               <span class="n">variable</span><span class="p">,</span>
+                               <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                               <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                               <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                               <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                               <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">)</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">xr_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">cmipaccess</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cmipaccess</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Robin Guillaume-Castel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -114,7 +114,6 @@ def download_all_realisations_one_model(model,
                                                      experiment,
                                                      variable='tas',
                                                      table='Amon')
-    print(realisations)
     print(f"Downloading {len(realisations)*len(variables):.0f} files ...")
     for realisation in realisations: 
         download_multi_variables_timeseries(model, 
