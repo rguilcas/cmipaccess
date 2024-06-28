@@ -128,15 +128,15 @@ def download_all_realisations_one_model(model,
                                             **kwargs)
 
 
-def download_all_realisations_all_model(experiment, 
-                                        *variables,
-                                        grid=None,
-                                        freq='mon',
-                                        source = 'spiritx',
-                                        esgf_fallback=True,
-                                        generation='CMIP6',
-                                        overwrite = False,
-                                        **kwargs):
+def download_all_realisations_all_models(experiment, 
+                                         *variables,
+                                         grid=None,
+                                         freq='mon',
+                                         source = 'spiritx',
+                                         esgf_fallback=True,
+                                         generation='CMIP6',
+                                         overwrite = False,
+                                         **kwargs):
     
     models = esgf.find_models_experiment(experiment, 
                                          variable='tas',
