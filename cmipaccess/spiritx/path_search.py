@@ -74,14 +74,14 @@ def get_path_CMIP6_data(model,
     # Checks if model data is on spirit
     path_list_to_model = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}")
     if len(path_list_to_model) == 0:
-        error_message = f"\nThere is no data for model '{model}' on Climserv\n"  #Check available models?
+        error_message = f"\nThere is no data for model '{model}' on Spiritx\n"  #Check available models?
         raise ValueError(error_message)
     center = path_list_to_model[0].split('/')[-2]
 
     # Checks if model-experiment data is on spirit
     path_list_to_experiment = glob.glob(f"/bdd/CMIP6/*/{center}/{model}/{experiment}")
     if len(path_list_to_experiment) == 0:
-        error_message = f"\nThere is no '{experiment}' data for model '{model}' on Climserv\n"  #Check available models?
+        error_message = f"\nThere is no '{experiment}' data for model '{model}' on Spiritx\n"  #Check available models?
         raise ValueError(error_message)
     path_to_experiment = path_list_to_experiment[0]
 
@@ -96,14 +96,14 @@ def get_path_CMIP6_data(model,
             realisation = r1_list[0]
     else:
         if realisation not in realisations_available:
-            error_message = f"\nThere is no realisation '{realisation}' for '{experiment}' for model '{model}'on Climserv\n" + \
+            error_message = f"\nThere is no realisation '{realisation}' for '{experiment}' for model '{model}'on Spiritx\n" + \
                             f"Available realisation for experiment '{experiment}' and model '{model}' are:\n     " + print_list(realisations_available)
             raise ValueError(error_message)
 
     # Checks if model-experiment-realisation-variable data is on spirit
     path_list_to_variable = glob.glob(f"{path_to_experiment}/{realisation}/*/{variable}")
     if len(path_list_to_variable) == 0:
-        error_message = f"\nThere is no variable '{variable}' for this model-experiment-realisation combo on Climserv\n"  #Check available models?
+        error_message = f"\nThere is no variable '{variable}' for this model-experiment-realisation combo on Spiritx\n"  #Check available models?
         raise ValueError(error_message)
     path_to_variable = [path for path in path_list_to_variable if freq in path][0]
 
@@ -144,13 +144,13 @@ def get_path_CMIP5_data(model,
     # Checks if model data is on spirit
     path_list_to_model = glob.glob(f"/bdd/CMIP5/output/*/{model}")
     if len(path_list_to_model) == 0:
-        error_message = f"\nThere is no data for model '{model}' on Climserv\n"  #Check available models?
+        error_message = f"\nThere is no data for model '{model}' on Spiritx\n"  #Check available models?
         raise ValueError(error_message)
     center = path_list_to_model[0].split('/')[-2]
     # Checks if model-experiment data is on spirit
     path_list_to_experiment = glob.glob(f"/bdd/CMIP5/output/{center}/{model}/{experiment}")
     if len(path_list_to_experiment) == 0:
-        error_message = f"\nThere is no '{experiment}' data for model '{model}' on Climserv\n"  #Check available models?
+        error_message = f"\nThere is no '{experiment}' data for model '{model}' on Spiritx\n"  #Check available models?
         raise ValueError(error_message)
     path_to_experiment = path_list_to_experiment[0]
     
@@ -172,14 +172,14 @@ def get_path_CMIP5_data(model,
             realisation = r1_list[0]
     else:
         if realisation not in realisations_available:
-            error_message = f"\nThere is no realisation '{realisation}' for '{experiment}' for model '{model}'on Climserv\n" + \
+            error_message = f"\nThere is no realisation '{realisation}' for '{experiment}' for model '{model}'on Spiritx\n" + \
                             f"Available realisation for experiment '{experiment}' and model '{model}' are:\n     " + print_list(realisations_available)
             raise ValueError(error_message)
 
     # Checks if model-experiment-realisation-variable data is on spirit
     path_list_to_variable = glob.glob(f"{path_to_freq}/*/*/{realisation}/latest/{variable}")
     if len(path_list_to_variable) == 0:
-        error_message = f"\nThere is no variable '{variable}' for this model-experiment-realisation combo on Climserv\n"  #Check available models?
+        error_message = f"\nThere is no variable '{variable}' for this model-experiment-realisation combo on Spiritx\n"  #Check available models?
         raise ValueError(error_message)
     path_to_variable = [path for path in path_list_to_variable if freq in path][0]
     final_paths = glob.glob(f"{path_to_variable}/*")

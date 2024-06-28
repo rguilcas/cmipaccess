@@ -14,5 +14,7 @@ cmipaccess/esgf/esgf_data_access.py
 cmipaccess/esgf/find_available_data.py
 cmipaccess/esgf/path_search.py
 cmipaccess/spiritx/__init__.py
+cmipaccess/spiritx/constants.py
 cmipaccess/spiritx/global_data_access.py
+cmipaccess/spiritx/global_data_download.py
 cmipaccess/spiritx/path_search.py
