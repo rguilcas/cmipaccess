@@ -15,8 +15,8 @@ from cmipaccess.tools import sort_realisations
 
 def download_single_timeseries(model, 
                                experiment, 
-                               variable,
                                realisation, 
+                               variable,
                                grid=None,
                                freq='mon',
                                source = 'spiritx',
@@ -72,7 +72,91 @@ def download_single_timeseries(model,
     year_start, year_end = data_global_mean.time.dt.year.values[[0,-1]]
     out_name = f"{variable}_{table_id}_{model}_{experiment}_{realisation}_{grid_label}_{year_start}_{year_end}.nc"
     data_global_mean.to_netcdf(f"{path_out}/{out_name}")
+    print(f'    --> File saved: {out_name}')
     return 
+
+def download_multi_variables_timeseries(model, 
+                                        experiment, 
+                                        realisation, 
+                                        *variables,
+                                        grid=None,
+                                        freq='mon',
+                                        source = 'spiritx',
+                                        esgf_fallback=True,
+                                        generation='CMIP6',
+                                        overwrite = False,
+                                        **kwargs):
+    for variable in variables:
+        download_single_timeseries(model, 
+                                   experiment, 
+                                   realisation, 
+                                   variable,
+                                   grid=grid,
+                                   freq=freq,
+                                   source = source,
+                                   esgf_fallback=esgf_fallback,
+                                   generation=generation,
+                                   overwrite = overwrite,
+                                   **kwargs)
+
+def download_all_realisations_one_model(model, 
+                                        experiment, 
+                                        *variables,
+                                        grid=None,
+                                        freq='mon',
+                                        source = 'spiritx',
+                                        esgf_fallback=True,
+                                        generation='CMIP6',
+                                        overwrite = False,
+                                        **kwargs):
+    
+    realisations = esgf.find_realisations_experiment(model, 
+                                                     experiment,
+                                                     variable='tas',
+                                                     table='Amon')
+    print(f"Downloading {len(realisations)*len(variables):.0f} files ...")
+    for realisation in realisations: 
+        download_multi_variables_timeseries(model, 
+                                            experiment, 
+                                            realisation, 
+                                            *variables,
+                                            grid=grid,
+                                            freq=freq,
+                                            source = source,
+                                            esgf_fallback=esgf_fallback,
+                                            generation=generation,
+                                            overwrite = overwrite,
+                                            **kwargs)
+
+
+def download_all_realisations_all_model(model, 
+                                        experiment, 
+                                        *variables,
+                                        grid=None,
+                                        freq='mon',
+                                        source = 'spiritx',
+                                        esgf_fallback=True,
+                                        generation='CMIP6',
+                                        overwrite = False,
+                                        **kwargs):
+    
+    realisations = esgf.find_realisations_experiment(model, 
+                                                     experiment,
+                                                     variable='tas',
+                                                     table='Amon')
+    print(f"Downloading {len(realisations)*len(variables):.0f} files ...")
+    for realisation in realisations: 
+        download_multi_variables_timeseries(model, 
+                                            experiment, 
+                                            realisation, 
+                                            *variables,
+                                            grid=grid,
+                                            freq=freq,
+                                            source = source,
+                                            esgf_fallback=esgf_fallback,
+                                            generation=generation,
+                                            overwrite = overwrite,
+                                            **kwargs)
 
 # def download_full_experiment_all_model(experiment, *variables, 
 #                                        no_parent=False, table = None, 

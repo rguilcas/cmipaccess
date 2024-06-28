@@ -7,7 +7,7 @@ def find_models_experiment(experiment,
     """
     Finds the models where the experiment has been ran and where the variable is available
     """
-    conn = SearchConnection('https://esgf-data.dkrz.de/esg-search', distrib=True)
+    conn = SearchConnection('https://esgf.ceda.ac.uk/esg-search', distrib=True)
     facets='source_id,member_id,data_node'
     ctx = conn.new_context(
         project='CMIP6',
@@ -26,7 +26,7 @@ def find_realisations_experiment(model,
     """
     Finds the realisations where the experiment has been ran with the model and where the variable is available
     """
-    conn = SearchConnection('https://esgf-data.dkrz.de/esg-search', distrib=True)
+    conn = SearchConnection('https://esgf.ceda.ac.uk/esg-search', distrib=True)
     facets='source_id,member_id,data_node'
     ctx = conn.new_context(
         project='CMIP6',
