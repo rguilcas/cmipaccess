@@ -1,7 +1,8 @@
 README.md
 setup.py
-cmipaccess/CMIP_data_access.py
 cmipaccess/__init__.py
+cmipaccess/data_access.py
+cmipaccess/path_search.py
 cmipaccess/tools.py
 cmipaccess.egg-info/PKG-INFO
 cmipaccess.egg-info/SOURCES.txt
@@ -13,4 +14,5 @@ cmipaccess/esgf/esgf_data_access.py
 cmipaccess/esgf/find_available_data.py
 cmipaccess/esgf/path_search.py
 cmipaccess/spiritx/__init__.py
+cmipaccess/spiritx/global_data_access.py
 cmipaccess/spiritx/path_search.py
