@@ -22,7 +22,7 @@ def download_single_timeseries(model,
                                esgf_fallback=True,
                                generation='CMIP6',
                                overwrite = False,
-                               area_path = None
+                               area_path = None,
                                **kwargs):
     # See if file already exists
     path_out = f"{GLOBAL_MEAN_DATA_DIR}/Models/{generation}/{model}/{experiment}/{realisation}"
@@ -86,6 +86,7 @@ def download_multi_variables_timeseries(model,
                                         esgf_fallback=True,
                                         generation='CMIP6',
                                         overwrite = False,
+                                        area_path = None,
                                         **kwargs):
     for variable in variables:
         try:
@@ -99,6 +100,7 @@ def download_multi_variables_timeseries(model,
                                     esgf_fallback=esgf_fallback,
                                     generation=generation,
                                     overwrite = overwrite,
+                                    area_path=area_path,
                                     **kwargs)
         except Exception as e:
             print(f"   !!FAIL !! {model} {experiment} {realisation} {variable} ")
@@ -114,6 +116,7 @@ def download_all_realisations_one_model(model,
                                         esgf_fallback=True,
                                         generation='CMIP6',
                                         overwrite = False,
+                                        area_path=None,
                                         **kwargs):
     
     realisations = esgf.find_realisations_experiment(model, 
@@ -132,6 +135,7 @@ def download_all_realisations_one_model(model,
                                             esgf_fallback=esgf_fallback,
                                             generation=generation,
                                             overwrite = overwrite,
+                                            area_path=area_path,
                                             **kwargs)
 
 
@@ -143,6 +147,7 @@ def download_all_realisations_all_models(experiment,
                                          esgf_fallback=True,
                                          generation='CMIP6',
                                          overwrite = False,
+                                         area_path = None,
                                          **kwargs):
     
     models = esgf.find_models_experiment(experiment, 
@@ -159,4 +164,5 @@ def download_all_realisations_all_models(experiment,
                                             esgf_fallback=esgf_fallback,
                                             generation=generation,
                                             overwrite = overwrite,
+                                            area_path=area_path,
                                             **kwargs)
