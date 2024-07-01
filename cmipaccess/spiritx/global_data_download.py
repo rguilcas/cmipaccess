@@ -71,7 +71,7 @@ def download_single_timeseries(model,
     data_global_mean = data_experiment[[variable]].weighted(area).mean(averaging_dims, keep_attrs=True)
     # Save data
     year_start, year_end = data_global_mean.time.dt.year.values[[0,-1]]
-    out_name = f"{variable}_{table_id}_{model}_{experiment}_{realisation}_{grid_label}_{year_start}_{year_end}.nc"
+    out_name = f"{variable}_{table_id}_{model}_{experiment}_{realisation}_{grid_label}_{year_start}-{year_end}.nc"
     data_global_mean.to_netcdf(f"{path_out}/{out_name}")
     print(f'    --> File saved: {out_name}')
     return 
