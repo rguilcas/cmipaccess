@@ -31,7 +31,7 @@
     cmipaccess.spiritx.global_data_access.get_detrended_global_time_series
     cmipaccess.spiritx.global_data_access.get_global_time_series
     cmipaccess.spiritx.global_data_access.get_global_toa_energy_budget
-    cmipaccess.spiritx.global_data_download.download_all_realisations_all_model
+    cmipaccess.spiritx.global_data_download.download_all_realisations_all_models
     cmipaccess.spiritx.global_data_download.download_all_realisations_one_model
     cmipaccess.spiritx.global_data_download.download_multi_variables_timeseries
     cmipaccess.spiritx.global_data_download.download_single_timeseries

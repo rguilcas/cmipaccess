@@ -1,40 +1,108 @@
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cmipaccess package &mdash; cmipaccess 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
-    <title>cmipaccess package &#8212; cmipaccess 0.3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
-    <script src="_static/documentation_options.js?v=e259d695"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=e259d695"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cmipaccess.esgf package" href="cmipaccess.esgf.html" />
-    <link rel="prev" title="cmipaccess" href="modules.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="prev" title="cmipaccess" href="modules.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="index.html" class="icon icon-home">
+            cmipaccess
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cmipaccess</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cmipaccess package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cmipaccess.esgf.html">cmipaccess.esgf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cmipaccess.spiritx.html">cmipaccess.spiritx package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cmipaccess.data_access">cmipaccess.data_access module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cmipaccess.data_access.get_CMIP6_data"><code class="docutils literal notranslate"><span class="pre">get_CMIP6_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cmipaccess.path_search">cmipaccess.path_search module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cmipaccess.path_search.get_path_CMIP_data"><code class="docutils literal notranslate"><span class="pre">get_path_CMIP_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cmipaccess.path_search.print_list"><code class="docutils literal notranslate"><span class="pre">print_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cmipaccess.tools">cmipaccess.tools module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cmipaccess.tools.sort_realisations"><code class="docutils literal notranslate"><span class="pre">sort_realisations()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cmipaccess">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-          <div class="body" role="main">
-            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cmipaccess</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">cmipaccess</a></li>
+      <li class="breadcrumb-item active">cmipaccess package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cmipaccess.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="cmipaccess-package">
-<h1>cmipaccess package<a class="headerlink" href="#cmipaccess-package" title="Link to this heading">¶</a></h1>
+<h1>cmipaccess package<a class="headerlink" href="#cmipaccess-package" title="Link to this heading"></a></h1>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cmipaccess.esgf.html">cmipaccess.esgf package</a><ul>
@@ -70,7 +138,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cmipaccess.spiritx.html#module-cmipaccess.spiritx.global_data_download">cmipaccess.spiritx.global_data_download module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_all_realisations_all_model"><code class="docutils literal notranslate"><span class="pre">download_all_realisations_all_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_all_realisations_all_models"><code class="docutils literal notranslate"><span class="pre">download_all_realisations_all_models()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_all_realisations_one_model"><code class="docutils literal notranslate"><span class="pre">download_all_realisations_one_model()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_multi_variables_timeseries"><code class="docutils literal notranslate"><span class="pre">download_multi_variables_timeseries()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess.spiritx.global_data_download.download_single_timeseries"><code class="docutils literal notranslate"><span class="pre">download_single_timeseries()</span></code></a></li>
@@ -90,27 +158,39 @@
 </div>
 </section>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
 <section id="module-cmipaccess.data_access">
-<span id="cmipaccess-data-access-module"></span><h2>cmipaccess.data_access module<a class="headerlink" href="#module-cmipaccess.data_access" title="Link to this heading">¶</a></h2>
+<span id="cmipaccess-data-access-module"></span><h2>cmipaccess.data_access module<a class="headerlink" href="#module-cmipaccess.data_access" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cmipaccess.data_access.get_CMIP6_data">
-<span class="sig-prename descclassname"><span class="pre">cmipaccess.data_access.</span></span><span class="sig-name descname"><span class="pre">get_CMIP6_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">xr_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/data_access.html#get_CMIP6_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.data_access.get_CMIP6_data" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.data_access.</span></span><span class="sig-name descname"><span class="pre">get_CMIP6_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">xr_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/data_access.html#get_CMIP6_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.data_access.get_CMIP6_data" title="Link to this definition"></a></dt>
 <dd><p>Loads gridded CMIP6 data from spirit or esgf</p>
-<p>grid : default is ‘gn’ native grid
-freq : can be ‘mon’, ‘day’, ‘3h’, … See CMIP documentation
-source : can be ‘spiritx’ for local access or ‘esgf’ for remote access
-esgf_fallback : if source is ‘spirit’ but the dataset is not found, tries to get remote data from esgf
-xr_kwargs : keyword args passed to xarray open_mfdataset function that opens files (chunks, cftime, …)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Climate model name</p></li>
+<li><p><strong>experiment</strong> (<em>str</em>) – Experiment name</p></li>
+<li><p><strong>realisation</strong> (<em>str</em>) – member id</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable name</p></li>
+<li><p><strong>grid</strong> (<em>str</em><em>, </em><em>optional</em>) – grid id. Defaults to None.</p></li>
+<li><p><strong>freq</strong> (<em>str</em><em>, </em><em>optional</em>) – temporal frequency of the data required. Defaults to ‘mon’.</p></li>
+<li><p><strong>source</strong> (<em>str</em><em>, </em><em>optional</em>) – source of the data. Can either be <cite>esgf</cite> or <cite>spiritx</cite>. Defaults to ‘spiritx’.</p></li>
+<li><p><strong>esgf_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – If the source is <cite>spiritx</cite>, tries finding the data on ESGF if not available on SpiritX. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xarray.Dataset containing the experiment data for the given variable.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
 <section id="module-cmipaccess.path_search">
-<span id="cmipaccess-path-search-module"></span><h2>cmipaccess.path_search module<a class="headerlink" href="#module-cmipaccess.path_search" title="Link to this heading">¶</a></h2>
+<span id="cmipaccess-path-search-module"></span><h2>cmipaccess.path_search module<a class="headerlink" href="#module-cmipaccess.path_search" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cmipaccess.path_search.get_path_CMIP_data">
-<span class="sig-prename descclassname"><span class="pre">cmipaccess.path_search.</span></span><span class="sig-name descname"><span class="pre">get_path_CMIP_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/path_search.html#get_path_CMIP_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.path_search.get_path_CMIP_data" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.path_search.</span></span><span class="sig-name descname"><span class="pre">get_path_CMIP_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/path_search.html#get_path_CMIP_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.path_search.get_path_CMIP_data" title="Link to this definition"></a></dt>
 <dd><p>Returns path to access gridded CMIP data from either CMIP5 or CMIP6</p>
 <p>grid : default is ‘gn’ native grid, only for CMIP6
 freq : can be ‘mon’, ‘day’, ‘3h’ or else, see CMIP documentation
@@ -121,95 +201,52 @@ generation : specify the generation wanted : either ‘CMIP5’ or ‘CMIP6’. 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cmipaccess.path_search.print_list">
-<span class="sig-prename descclassname"><span class="pre">cmipaccess.path_search.</span></span><span class="sig-name descname"><span class="pre">print_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/path_search.html#print_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.path_search.print_list" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.path_search.</span></span><span class="sig-name descname"><span class="pre">print_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/path_search.html#print_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.path_search.print_list" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-cmipaccess.tools">
-<span id="cmipaccess-tools-module"></span><h2>cmipaccess.tools module<a class="headerlink" href="#module-cmipaccess.tools" title="Link to this heading">¶</a></h2>
+<span id="cmipaccess-tools-module"></span><h2>cmipaccess.tools module<a class="headerlink" href="#module-cmipaccess.tools" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cmipaccess.tools.sort_realisations">
-<span class="sig-prename descclassname"><span class="pre">cmipaccess.tools.</span></span><span class="sig-name descname"><span class="pre">sort_realisations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_realisations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/tools.html#sort_realisations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.tools.sort_realisations" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.tools.</span></span><span class="sig-name descname"><span class="pre">sort_realisations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_realisations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/tools.html#sort_realisations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.tools.sort_realisations" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-cmipaccess">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cmipaccess" title="Link to this heading">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cmipaccess" title="Link to this heading"></a></h2>
 </section>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="cmipaccess" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmipaccess.esgf.html" class="btn btn-neutral float-right" title="cmipaccess.esgf package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Robin Guillaume-Castel.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">cmipaccess</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cmipaccess</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">cmipaccess package</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">cmipaccess</a><ul>
-      <li>Previous: <a href="modules.html" title="previous chapter">cmipaccess</a></li>
-      <li>Next: <a href="cmipaccess.esgf.html" title="next chapter">cmipaccess.esgf package</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2024, Robin Guillaume-Castel.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
-      
-      |
-      <a href="_sources/cmipaccess.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>
