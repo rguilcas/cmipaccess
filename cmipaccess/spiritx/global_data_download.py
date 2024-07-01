@@ -22,6 +22,7 @@ def download_single_timeseries(model,
                                esgf_fallback=True,
                                generation='CMIP6',
                                overwrite = False,
+                               area_path = None
                                **kwargs):
     # See if file already exists
     path_out = f"{GLOBAL_MEAN_DATA_DIR}/Models/{generation}/{model}/{experiment}/{realisation}"
@@ -55,14 +56,15 @@ def download_single_timeseries(model,
     elif table_id=='Omon':
         table_grid='Ofx'
         area_var = 'areacello'
-    path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/{experiment}/*/{table_grid}/{area_var}/{grid_label}/latest/*")
-    if len(path_list_to_area) == 0:
-        path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/piControl/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+    if area_path is None:
+        path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/{experiment}/*/{table_grid}/{area_var}/{grid_label}/latest/*")
         if len(path_list_to_area) == 0:
-            path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/*/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+            path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/piControl/*/{table_grid}/{area_var}/{grid_label}/latest/*")
             if len(path_list_to_area) == 0:
-                path_list_to_area = glob.glob(f"/bdd/CMIP6/*/*/{model}/*/*/{table_grid}/{area_var}/{grid_label}/latest/*")
-    area_path = path_list_to_area[0]
+                path_list_to_area = glob.glob(f"/bdd/CMIP6/CMIP/*/{model}/*/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+                if len(path_list_to_area) == 0:
+                    path_list_to_area = glob.glob(f"/bdd/CMIP6/*/*/{model}/*/*/{table_grid}/{area_var}/{grid_label}/latest/*")
+        area_path = path_list_to_area[0]
     area = xr.open_dataset(area_path)[area_var].fillna(0)
     averaging_dims = area.dims
     # Compute global average
