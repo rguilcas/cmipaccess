@@ -7,7 +7,7 @@ from cmipaccess.tools import sort_realisations
 import pandas as pd
 
 
-from .constants import GLOBAL_MEAN_DATA_DIR    
+from ..local.config import GLOBAL_MEAN_DATA_DIR    
 
 def get_global_time_series(model, experiment, variable, realisation, **kwargs):
     """Return an xarray Dataset containing a global mean time series of the variable required.
@@ -106,6 +106,7 @@ def get_detrended_global_time_series(model, experiment, variable, realisation, *
     experiment_data = get_global_time_series(model, experiment, variable, realisation, use_cftime=True, **kwargs)
     # Get parent information and load control data
     parent_experiment_id = experiment_data.attrs['parent_experiment_id']
+    print(parent_experiment_id, parent_variant_label)
     parent_variant_label = experiment_data.attrs['parent_variant_label']
     control_data = get_global_time_series(model, parent_experiment_id, variable, parent_variant_label, use_cftime=True, **kwargs)
     # Get branch time in parent time units

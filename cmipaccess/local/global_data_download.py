@@ -2,14 +2,13 @@ from cmath import exp
 import cmipaccess.esgf as esgf
 import cmipaccess.spiritx as spiritx
 import cmipaccess as cmip
-from .constants import GLOBAL_MEAN_DATA_DIR
+from ..local.config import GLOBAL_MEAN_DATA_DIR
 import xarray as xr 
 import warnings
 from tqdm import tqdm
 warnings.simplefilter("ignore", category=xr.SerializationWarning) 
 import os
 import glob
-from cmipaccess.tools import sort_realisations
 
 
 def download_single_timeseries(model, 
@@ -25,7 +24,7 @@ def download_single_timeseries(model,
                                area_path = None,
                                **kwargs):
     # See if file already exists
-    path_out = f"{GLOBAL_MEAN_DATA_DIR}/Models/{generation}/{model}/{experiment}/{realisation}"
+    path_out = f"{GLOBAL_MEAN_DATA_DIR}/{generation}/{model}/{experiment}/{realisation}"
     if os.path.exists(path_out):
         path_out_exists = True
         path_out_file = glob.glob(f"{path_out}/{variable}_*")
