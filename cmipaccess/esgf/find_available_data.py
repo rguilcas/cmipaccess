@@ -14,7 +14,7 @@ def find_models_experiment(experiment,
         experiment_id=experiment,
         variable=variable,
         table_id=table,
-        facets="*")
+        facets=facets)
     models = list(ctx.facet_counts['source_id'].keys())
     models.sort()
     return models
