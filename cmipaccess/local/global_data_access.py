@@ -2,12 +2,27 @@ import xarray as xr
 import glob
 from tqdm import tqdm
 import cftime
+import os
 import numpy as np
 from cmipaccess.tools import sort_realisations
+from ..local.global_data_download import download_area_file
 import pandas as pd
 
 
 from ..local.config import GLOBAL_MEAN_DATA_DIR    
+
+
+def get_area_data(model, variable, grid, generation='CMIP6',
+                  **kwargs):
+    file_path = f"{GLOBAL_MEAN_DATA_DIR}/{generation}/{model}/grids/{variable}_{model}_{grid}.nc"
+    if os.path.exists(file_path):
+        return xr.open_dataset(file_path)
+    else:
+        print('Area file not avaiable, trying to download it ...')
+        download_area_file(model, variable, grid, generation=generation, **kwargs)
+        return xr.open_dataset(file_path)
+
+
 
 def get_global_time_series(model, experiment, variable, realisation, **kwargs):
     """Return an xarray Dataset containing a global mean time series of the variable required.
@@ -24,7 +39,7 @@ def get_global_time_series(model, experiment, variable, realisation, **kwargs):
     Returns:
         xarray.Dataset: _description_
     """
-    file = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/Models/*/{model}/{experiment}/{realisation}/{variable}_*")
+    file = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/*/{model}/{experiment}/{realisation}/{variable}_*")
     if len(file)==0:
         raise ValueError('Global mean data not readily available on spiritx')
     return xr.open_dataset(file[0], **kwargs)
@@ -35,9 +50,9 @@ def get_all_detrended_global_time_series(model, experiment, variable, no_parent=
                                          convert_time_to_datetime=True,
                                          progress=True, **kwargs):
     if no_parent:
-        files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/Models/*/{model}/{experiment}/*/{variable}_*")
+        files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/*/{model}/{experiment}/*/{variable}_*")
     else: #detrending only works for CMIP6
-        files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/Models/CMIP6/{model}/{experiment}/*/{variable}_*")
+        files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/CMIP6/{model}/{experiment}/*/{variable}_*")
     if len(files)==0:
         raise ValueError('Global mean data not readily available on spiritx')
     realisations = sort_realisations([file.split('/')[-2] for file in files])

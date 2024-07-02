@@ -12,6 +12,7 @@ cmipaccess.egg-info/top_level.txt
 cmipaccess/esgf/__init__.py
 cmipaccess/esgf/esgf_data_access.py
 cmipaccess/esgf/find_available_data.py
+cmipaccess/esgf/path_area_search.py
 cmipaccess/esgf/path_search.py
 cmipaccess/local/__init__.py
 cmipaccess/local/config.py
