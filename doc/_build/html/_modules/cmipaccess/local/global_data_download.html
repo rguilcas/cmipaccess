@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cmipaccess.local.global_data_download &mdash; cmipaccess 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            cmipaccess
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cmipaccess</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cmipaccess</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cmipaccess.local.global_data_download</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cmipaccess.local.global_data_download</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">cmath</span> <span class="kn">import</span> <span class="n">exp</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">esgf</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">GLOBAL_MEAN_DATA_DIR</span>
+<span class="kn">from</span> <span class="nn">.cell_files</span> <span class="kn">import</span> <span class="n">get_cell_data</span>
+<span class="kn">from</span> <span class="nn">..path_search</span> <span class="kn">import</span> <span class="n">get_path_CMIP_data</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span> 
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">xr</span><span class="o">.</span><span class="n">SerializationWarning</span><span class="p">)</span> 
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+
+
+<div class="viewcode-block" id="download_single_timeseries">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_download.download_single_timeseries.html#cmipaccess.local.global_data_download.download_single_timeseries">[docs]</a>
+<span class="k">def</span> <span class="nf">download_single_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                               <span class="n">experiment</span><span class="p">,</span> 
+                               <span class="n">realisation</span><span class="p">,</span> 
+                               <span class="n">variable</span><span class="p">,</span>
+                               <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                               <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                               <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                               <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads single global mean time series to local directory</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (_type_): _description_</span>
+<span class="sd">        experiment (_type_): _description_</span>
+<span class="sd">        realisation (_type_): _description_</span>
+<span class="sd">        variable (_type_): _description_</span>
+<span class="sd">        grid (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">        freq (str, optional): _description_. Defaults to &#39;mon&#39;.</span>
+<span class="sd">        source (str, optional): _description_. Defaults to &#39;spiritx&#39;.</span>
+<span class="sd">        esgf_fallback (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        generation (str, optional): _description_. Defaults to &#39;CMIP6&#39;.</span>
+<span class="sd">        overwrite (bool, optional): _description_. Defaults to False.</span>
+<span class="sd">        area_path (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># See if file already exists</span>
+    <span class="n">path_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GLOBAL_MEAN_DATA_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">generation</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_out</span><span class="p">):</span>
+        <span class="n">path_out_exists</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">path_out_file</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_out</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_out_file</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File already exists. Add overwrite=True, to overwrite it&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path_out_exists</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># Find data file</span>
+    <span class="n">path_data</span> <span class="o">=</span> <span class="n">get_path_CMIP_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                   <span class="n">experiment</span><span class="p">,</span> 
+                                   <span class="n">realisation</span><span class="p">,</span> 
+                                   <span class="n">variable</span><span class="p">,</span>
+                                   <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                   <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                   <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                   <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                   <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path_out_exists</span> <span class="p">:</span> 
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
+    <span class="n">data_experiment</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># Find area file</span>
+    <span class="n">grid_label</span> <span class="o">=</span> <span class="n">data_experiment</span><span class="o">.</span><span class="n">grid_label</span>
+    <span class="n">table_id</span> <span class="o">=</span> <span class="n">data_experiment</span><span class="o">.</span><span class="n">table_id</span>
+    <span class="k">if</span> <span class="n">table_id</span><span class="o">==</span><span class="s1">&#39;Amon&#39;</span><span class="p">:</span>
+        <span class="n">area_var</span> <span class="o">=</span> <span class="s1">&#39;areacella&#39;</span>
+    <span class="k">elif</span> <span class="n">table_id</span><span class="o">==</span><span class="s1">&#39;Omon&#39;</span><span class="p">:</span>
+        <span class="n">area_var</span> <span class="o">=</span> <span class="s1">&#39;areacello&#39;</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="n">get_cell_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">area_var</span><span class="p">,</span> <span class="n">grid_label</span><span class="p">)[</span><span class="n">area_var</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">averaging_dims</span> <span class="o">=</span> <span class="n">area</span><span class="o">.</span><span class="n">dims</span>
+    <span class="c1"># Compute global average</span>
+    <span class="n">data_global_mean</span> <span class="o">=</span> <span class="n">data_experiment</span><span class="p">[[</span><span class="n">variable</span><span class="p">]]</span><span class="o">.</span><span class="n">weighted</span><span class="p">(</span><span class="n">area</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">averaging_dims</span><span class="p">,</span> <span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Save data</span>
+    <span class="n">year_start</span><span class="p">,</span> <span class="n">year_end</span> <span class="o">=</span> <span class="n">data_global_mean</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">values</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">out_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grid_label</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">year_start</span><span class="si">:</span><span class="s2">04.0f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">year_end</span><span class="si">:</span><span class="s2">04.0f</span><span class="si">}</span><span class="s2">.nc&quot;</span>
+    <span class="n">data_global_mean</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_out</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    --&gt; File saved: </span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> </div>
+
+
+<div class="viewcode-block" id="download_multi_variables_timeseries">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_download.download_multi_variables_timeseries.html#cmipaccess.local.global_data_download.download_multi_variables_timeseries">[docs]</a>
+<span class="k">def</span> <span class="nf">download_multi_variables_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="n">realisation</span><span class="p">,</span> 
+                                        <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                                        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                                        <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                                        <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">area_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads global mean time series for multiple variables to local directory</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (_type_): _description_</span>
+<span class="sd">        experiment (_type_): _description_</span>
+<span class="sd">        realisation (_type_): _description_</span>
+<span class="sd">        grid (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">        freq (str, optional): _description_. Defaults to &#39;mon&#39;.</span>
+<span class="sd">        source (str, optional): _description_. Defaults to &#39;spiritx&#39;.</span>
+<span class="sd">        esgf_fallback (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        generation (str, optional): _description_. Defaults to &#39;CMIP6&#39;.</span>
+<span class="sd">        overwrite (bool, optional): _description_. Defaults to False.</span>
+<span class="sd">        area_path (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">download_single_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                    <span class="n">experiment</span><span class="p">,</span> 
+                                    <span class="n">realisation</span><span class="p">,</span> 
+                                    <span class="n">variable</span><span class="p">,</span>
+                                    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                    <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                    <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                    <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                    <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">,</span>
+                                    <span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span><span class="p">,</span>
+                                    <span class="n">area_path</span><span class="o">=</span><span class="n">area_path</span><span class="p">,</span>
+                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   !!FAIL !! </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="download_all_realisations_one_model">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_download.download_all_realisations_one_model.html#cmipaccess.local.global_data_download.download_all_realisations_one_model">[docs]</a>
+<span class="k">def</span> <span class="nf">download_all_realisations_one_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                                        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                                        <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                                        <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">area_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download timeseries for all available realisations for multiple variables</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (_type_): _description_</span>
+<span class="sd">        experiment (_type_): _description_</span>
+<span class="sd">        grid (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">        freq (str, optional): _description_. Defaults to &#39;mon&#39;.</span>
+<span class="sd">        source (str, optional): _description_. Defaults to &#39;spiritx&#39;.</span>
+<span class="sd">        esgf_fallback (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        generation (str, optional): _description_. Defaults to &#39;CMIP6&#39;.</span>
+<span class="sd">        overwrite (bool, optional): _description_. Defaults to False.</span>
+<span class="sd">        area_path (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">realisations</span> <span class="o">=</span> <span class="n">esgf</span><span class="o">.</span><span class="n">find_realisations_experiment</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                                     <span class="n">experiment</span><span class="p">,</span>
+                                                     <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;tas&#39;</span><span class="p">,</span>
+                                                     <span class="n">table</span><span class="o">=</span><span class="s1">&#39;Amon&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2"> | Downloading </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">realisations</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> file(s) ...&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">realisation</span> <span class="ow">in</span> <span class="n">realisations</span><span class="p">:</span> 
+        <span class="n">download_multi_variables_timeseries</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                            <span class="n">experiment</span><span class="p">,</span> 
+                                            <span class="n">realisation</span><span class="p">,</span> 
+                                            <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                            <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                            <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                            <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">,</span>
+                                            <span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span><span class="p">,</span>
+                                            <span class="n">area_path</span><span class="o">=</span><span class="n">area_path</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="download_all_realisations_all_models">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_download.download_all_realisations_all_models.html#cmipaccess.local.global_data_download.download_all_realisations_all_models">[docs]</a>
+<span class="k">def</span> <span class="nf">download_all_realisations_all_models</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> 
+                                         <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                         <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                         <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                                         <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;spiritx&#39;</span><span class="p">,</span>
+                                         <span class="n">esgf_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">generation</span><span class="o">=</span><span class="s1">&#39;CMIP6&#39;</span><span class="p">,</span>
+                                         <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">area_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Downloads global time series for all models and all experiments available for a given experiment</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        experiment (_type_): _description_</span>
+<span class="sd">        grid (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">        freq (str, optional): _description_. Defaults to &#39;mon&#39;.</span>
+<span class="sd">        source (str, optional): _description_. Defaults to &#39;spiritx&#39;.</span>
+<span class="sd">        esgf_fallback (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        generation (str, optional): _description_. Defaults to &#39;CMIP6&#39;.</span>
+<span class="sd">        overwrite (bool, optional): _description_. Defaults to False.</span>
+<span class="sd">        area_path (_type_, optional): _description_. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">models</span> <span class="o">=</span> <span class="n">esgf</span><span class="o">.</span><span class="n">find_models_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> 
+                                         <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;tas&#39;</span><span class="p">,</span>
+                                         <span class="n">table</span><span class="o">=</span><span class="s1">&#39;Amon&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading data from </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> models&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span> 
+        <span class="n">download_all_realisations_one_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                            <span class="n">experiment</span><span class="p">,</span> 
+                                            <span class="o">*</span><span class="n">variables</span><span class="p">,</span>
+                                            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                            <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span>
+                                            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+                                            <span class="n">esgf_fallback</span><span class="o">=</span><span class="n">esgf_fallback</span><span class="p">,</span>
+                                            <span class="n">generation</span><span class="o">=</span><span class="n">generation</span><span class="p">,</span>
+                                            <span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span><span class="p">,</span>
+                                            <span class="n">area_path</span><span class="o">=</span><span class="n">area_path</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Robin Guillaume-Castel.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

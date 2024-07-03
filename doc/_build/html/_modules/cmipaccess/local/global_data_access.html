@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cmipaccess.local.global_data_access &mdash; cmipaccess 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            cmipaccess
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cmipaccess</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cmipaccess</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cmipaccess.local.global_data_access</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cmipaccess.local.global_data_access</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span> 
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">cftime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="kn">import</span> <span class="n">sort_realisations</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="kn">from</span> <span class="nn">..local.config</span> <span class="kn">import</span> <span class="n">GLOBAL_MEAN_DATA_DIR</span>    
+
+
+
+
+<div class="viewcode-block" id="get_global_time_series">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_global_time_series.html#cmipaccess.local.global_data_access.get_global_time_series">[docs]</a>
+<span class="k">def</span> <span class="nf">get_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">realisation</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an xarray Dataset containing a global mean time series of the variable required.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (str): Climate model</span>
+<span class="sd">        experiment (str): Experiment id</span>
+<span class="sd">        variable (str): variable name</span>
+<span class="sd">        realisation (str): member id</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: An error is raised if the global mean data is not found on spiritX.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xarray.Dataset: Dataset containing the variable as a global time series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GLOBAL_MEAN_DATA_DIR</span><span class="si">}</span><span class="s2">/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_*&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Global mean data not readily available on spiritx. You can try downloading it with the various cmipaccess.local.download_ functions&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_detrended_global_time_series">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_all_detrended_global_time_series.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series">[docs]</a>
+<span class="k">def</span> <span class="nf">get_all_detrended_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                                         <span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">warn_too_short_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                                         <span class="n">convert_time_to_datetime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns all global mean time series for a given experiment, model and variable. The time series are corrected for control experiment drift.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (str): Climate model</span>
+<span class="sd">        experiment (str): experiment</span>
+<span class="sd">        variable (str): variable name</span>
+<span class="sd">        no_parent (bool, optional): Specify if the experiment has no parent (required for amip experiments). Defaults to False.</span>
+<span class="sd">        remove_if_control_less_than (str or int, optional): does not load timeseries if parrallel control run is shorter than this value. Defaults to &#39;max&#39;.</span>
+<span class="sd">        warn_too_short_control (bool, optional): Prints warning when control experiment is too short. Defaults to False.</span>
+<span class="sd">        convert_time_to_datetime (bool, optional): Converts cftime read with xarray to pandas datetime. Defaults to True.</span>
+<span class="sd">        progress (bool, optional): Shows a progressbar for all realisations. Defaults to True.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Raises an error when the timeseries have not been downloaded yet</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xr.Dataset: dataset containing the global timeseries for all realisations with the control drift removed, along with the mean control value and the number of years of control run parallel to the experiment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">no_parent</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GLOBAL_MEAN_DATA_DIR</span><span class="si">}</span><span class="s2">/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">/*/</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_*&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1">#detrending only works for CMIP6</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GLOBAL_MEAN_DATA_DIR</span><span class="si">}</span><span class="s2">/CMIP6/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">/*/</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_*&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Global mean data not readily available locally. &#39;</span><span class="p">)</span>
+    <span class="n">realisations</span> <span class="o">=</span> <span class="n">sort_realisations</span><span class="p">([</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">])</span>
+    <span class="n">all_control</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">all_detrended_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">realisations</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="n">realisations</span>
+    <span class="k">for</span> <span class="n">realisation</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+        <span class="c1"># Load experiment data</span>
+        <span class="n">experiment_data</span> <span class="o">=</span> <span class="n">get_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">realisation</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">use_cftime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">no_parent</span><span class="p">:</span>
+            <span class="c1"># Get parent information and load control data</span>
+            <span class="n">parent_experiment_id</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;parent_experiment_id&#39;</span><span class="p">]</span>
+            <span class="n">parent_variant_label</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;parent_variant_label&#39;</span><span class="p">]</span>
+            <span class="n">control_data_key</span> <span class="o">=</span> <span class="s1">&#39;parent_experiment_id/parent_variant_label&#39;</span>
+            <span class="k">if</span> <span class="n">control_data_key</span> <span class="ow">in</span> <span class="n">all_control</span><span class="p">:</span>
+                <span class="n">control_data</span> <span class="o">=</span> <span class="n">all_control</span><span class="p">[</span><span class="n">control_data_key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">control_data</span> <span class="o">=</span> <span class="n">get_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">parent_experiment_id</span><span class="p">,</span> <span class="n">parent_variant_label</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">use_cftime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">all_control</span><span class="p">[</span><span class="n">control_data_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">control_data</span>
+            <span class="c1"># Get branch time in parent time units</span>
+            <span class="n">branch_time_int</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;branch_time_in_parent&#39;</span><span class="p">]</span>
+            <span class="n">parents_time_units</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;parent_time_units&#39;</span><span class="p">]</span>
+            <span class="n">branch_time</span> <span class="o">=</span> <span class="n">cftime</span><span class="o">.</span><span class="n">num2date</span><span class="p">(</span><span class="n">branch_time_int</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">calendar</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">parents_time_units</span><span class="p">)</span>
+            <span class="c1"># get piControl parallel to experiment</span>
+            <span class="n">control_data_extract</span> <span class="o">=</span> <span class="n">control_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">branch_time</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">size</span><span class="p">))[</span><span class="n">variable</span><span class="p">]</span>
+            <span class="n">control_data_extract</span> <span class="o">=</span> <span class="n">control_data_extract</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="n">control_data_extract</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">size</span><span class="p">])</span>
+            <span class="c1">#Check control extract size</span>
+            <span class="n">control_years</span> <span class="o">=</span> <span class="n">control_data_extract</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">12</span>
+            <span class="k">if</span> <span class="n">remove_if_control_less_than</span> <span class="o">==</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span>
+                <span class="n">control_min_length</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">size</span><span class="o">/</span><span class="mi">12</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">control_min_length</span> <span class="o">=</span> <span class="n">remove_if_control_less_than</span>
+            <span class="k">if</span> <span class="n">control_years</span> <span class="o">&lt;</span> <span class="n">control_min_length</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">warn_too_short_control</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s1">: only </span><span class="si">{</span><span class="n">control_years</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1"> years of piControl&#39;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="c1"># Determine linear trend and intercept</span>
+            <span class="n">control_drift</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">control_data_extract</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">polyfit_coefficients</span><span class="p">)</span>
+            <span class="c1"># Remove drift</span>
+            <span class="n">detrended_experiment_data</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">-</span> <span class="n">control_drift</span>
+            <span class="n">ds_realisation</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">({</span><span class="n">variable</span><span class="p">:</span> <span class="n">detrended_experiment_data</span><span class="p">,</span> 
+                                         <span class="s1">&#39;control_years&#39;</span><span class="p">:</span> <span class="n">control_years</span><span class="p">,</span> 
+                                         <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s1">_control_mean&#39;</span><span class="p">:</span><span class="n">control_drift</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">no_parent</span> <span class="p">:</span>
+            <span class="n">ds_realisation</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">({</span><span class="n">variable</span><span class="p">:</span><span class="n">experiment_data</span><span class="p">[</span><span class="n">variable</span><span class="p">]})</span>
+        <span class="n">ds_realisation</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span> 
+        <span class="n">all_detrended_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds_realisation</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">realisation</span><span class="o">=</span><span class="n">realisation</span><span class="p">))</span>
+    <span class="n">ds_out</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_detrended_data</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;realisation&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">convert_time_to_datetime</span><span class="p">:</span>
+        <span class="n">start_month</span> <span class="o">=</span> <span class="n">ds_out</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ds_out</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start_month</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;MS&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">ds_out</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time is likely out of the datetime range, staying with cftime&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds_out</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="get_detrended_global_time_series">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_detrended_global_time_series.html#cmipaccess.local.global_data_access.get_detrended_global_time_series">[docs]</a>
+<span class="k">def</span> <span class="nf">get_detrended_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span><span class="n">realisation</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the global time series of a variable with the control experiment drift removed.</span>
+<span class="sd">    The drift is computed as a linear trend in time of the control experiment parallel to the experiment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (str): Climate model name</span>
+<span class="sd">        experiment (str): Experiment id</span>
+<span class="sd">        variable (str): Variable id</span>
+<span class="sd">        realisation (str): member id</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xr.Dataset: dataset containing the global timeseries with the control drift removed, along with the mean control value and the number of years of control run parallel to the experiment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load experiment data</span>
+    <span class="n">experiment_data</span> <span class="o">=</span> <span class="n">get_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">realisation</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">use_cftime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># Get parent information and load control data</span>
+    <span class="n">parent_experiment_id</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;parent_experiment_id&#39;</span><span class="p">]</span>
+    <span class="n">parent_variant_label</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;parent_variant_label&#39;</span><span class="p">]</span>
+    <span class="n">control_data</span> <span class="o">=</span> <span class="n">get_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">parent_experiment_id</span><span class="p">,</span> <span class="n">parent_variant_label</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">use_cftime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># Get branch time in parent time units</span>
+    <span class="n">branch_time_int</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;branch_time_in_parent&#39;</span><span class="p">]</span>
+    <span class="n">parents_time_units</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;parent_time_units&#39;</span><span class="p">]</span>
+    <span class="n">branch_time</span> <span class="o">=</span> <span class="n">cftime</span><span class="o">.</span><span class="n">num2date</span><span class="p">(</span><span class="n">branch_time_int</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">calendar</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">parents_time_units</span><span class="p">)</span>
+    <span class="c1"># get piControl parallel to experiment</span>
+    <span class="n">control_data_extract</span> <span class="o">=</span> <span class="n">control_data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">branch_time</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">size</span><span class="p">))[</span><span class="n">variable</span><span class="p">]</span>
+    <span class="n">control_data_extract</span> <span class="o">=</span> <span class="n">control_data_extract</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="n">control_data_extract</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">size</span><span class="p">])</span>
+    <span class="c1"># Determine linear trend and intercept</span>
+    <span class="n">control_drift</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">experiment_data</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">control_data_extract</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">polyfit_coefficients</span><span class="p">)</span>
+    <span class="c1"># Remove drift</span>
+    <span class="n">detrended_experiment_data</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">-</span> <span class="n">control_drift</span>
+    <span class="n">ds_out</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">control_extract</span> <span class="o">=</span> <span class="n">control_data_extract</span><span class="p">,</span> <span class="n">control_drift</span><span class="o">=</span><span class="n">control_drift</span><span class="p">,</span> <span class="n">detrended_data</span><span class="o">=</span> <span class="n">detrended_experiment_data</span><span class="p">))</span>
+    <span class="n">ds_out</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">experiment_data</span><span class="o">.</span><span class="n">attrs</span> 
+    <span class="k">return</span> <span class="n">ds_out</span></div>
+
+
+
+                            
+
+
+<div class="viewcode-block" id="get_global_toa_energy_budget">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_global_toa_energy_budget.html#cmipaccess.local.global_data_access.get_global_toa_energy_budget">[docs]</a>
+<span class="k">def</span> <span class="nf">get_global_toa_energy_budget</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                           <span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">warn_too_short_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                           <span class="n">convert_time_to_datetime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                           <span class="n">progress</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">add_control_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load global mean time series of tas, rsut, rlut, rsdt and eei for the given model and experiment.</span>
+<span class="sd">    Time series are by default detrended by the control experiment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (str): Climate model name</span>
+<span class="sd">        experiment (str): Experiment id</span>
+<span class="sd">        no_parent (bool, optional): Specify if the experiment has no parent experiment, required for amip-style experiments. Defaults to False.</span>
+<span class="sd">        remove_if_control_less_than (str or int, optional): does not load timeseries if parrallel control run is shorter than this value. Defaults to &#39;max&#39;.</span>
+<span class="sd">        warn_too_short_control (bool, optional): Prints warning when control experiment is too short. Defaults to False.</span>
+<span class="sd">        convert_time_to_datetime (bool, optional): Converts cftime read with xarray to pandas datetime. Defaults to True.</span>
+<span class="sd">        progress (bool, optional): Shows a progressbar for all realisations. Defaults to True.</span>
+<span class="sd">        add_control_mean (bool, optional): Adds control mean to global time series to only have the trend removed. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xr.Dataset: dataset containing the main toa radiation budget variables with the piControl trend removed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">get_all_detrended_global_time_series_multivariable</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span>
+                                                            <span class="s1">&#39;tas&#39;</span><span class="p">,</span><span class="s1">&#39;rlut&#39;</span><span class="p">,</span><span class="s1">&#39;rsut&#39;</span><span class="p">,</span><span class="s1">&#39;rsdt&#39;</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="n">no_parent</span><span class="p">,</span> 
+                                                            <span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="n">remove_if_control_less_than</span><span class="p">,</span> 
+                                                            <span class="n">warn_too_short_control</span><span class="o">=</span><span class="n">warn_too_short_control</span><span class="p">,</span> 
+                                                            <span class="n">progress</span> <span class="o">=</span> <span class="n">progress</span><span class="p">,</span> <span class="n">add_control_mean</span><span class="o">=</span><span class="n">add_control_mean</span><span class="p">,</span>
+                                                            <span class="n">convert_time_to_datetime</span><span class="o">=</span><span class="n">convert_time_to_datetime</span><span class="p">,</span>
+                                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;eei&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rsdt</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">rsut</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">rlut</span>
+    <span class="k">if</span> <span class="n">add_control_mean</span><span class="p">:</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;eei_control_mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rsdt_control_mean</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">rsut_control_mean</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">rlut_control_mean</span>
+    <span class="k">return</span> <span class="n">ds</span></div>
+
+
+<div class="viewcode-block" id="get_all_detrended_global_time_series_multivariable">
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable">[docs]</a>
+<span class="k">def</span> <span class="nf">get_all_detrended_global_time_series_multivariable</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="o">*</span><span class="n">variables</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                                         <span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">warn_too_short_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                                         <span class="n">progress</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">add_control_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">convert_time_to_datetime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return detrended time series of multiple variables</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (str): Climate model name</span>
+<span class="sd">        experiment (str): Experiment id</span>
+<span class="sd">        variables (str): variable names</span>
+<span class="sd">        no_parent (bool, optional): Specify if the experiment has no parent experiment, required for amip-style experiments. Defaults to False.</span>
+<span class="sd">        remove_if_control_less_than (str or int, optional): does not load timeseries if parrallel control run is shorter than this value. Defaults to &#39;max&#39;.</span>
+<span class="sd">        warn_too_short_control (bool, optional): Prints warning when control experiment is too short. Defaults to False.</span>
+<span class="sd">        convert_time_to_datetime (bool, optional): Converts cftime read with xarray to pandas datetime. Defaults to True.</span>
+<span class="sd">        progress (bool, optional): Shows a progressbar for all realisations. Defaults to True.</span>
+<span class="sd">        add_control_mean (bool, optional): Adds control mean to global time series to only have the trend removed. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xr.Dataset: dataset containing multiple global mean variables with the control drift removed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_variables_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">progress</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="n">variables</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+        <span class="n">data_variable</span> <span class="o">=</span> <span class="n">get_all_detrended_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> 
+                                                            <span class="n">no_parent</span><span class="o">=</span><span class="n">no_parent</span><span class="p">,</span><span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="n">remove_if_control_less_than</span><span class="p">,</span> 
+                                                            <span class="n">warn_too_short_control</span><span class="o">=</span><span class="n">warn_too_short_control</span><span class="p">,</span> 
+                                                            <span class="n">convert_time_to_datetime</span><span class="o">=</span><span class="n">convert_time_to_datetime</span><span class="p">,</span>
+                                                            <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_control_mean</span> <span class="p">:</span>
+            <span class="n">data_variable</span> <span class="o">=</span> <span class="n">data_variable</span><span class="p">[[</span><span class="n">variable</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_control_mean&quot;</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_variable</span> <span class="o">=</span> <span class="n">data_variable</span><span class="p">[[</span><span class="n">variable</span><span class="p">]]</span>
+        <span class="n">list_variables_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_variable</span><span class="p">)</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">list_variables_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Robin Guillaume-Castel.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cmipaccess.spiritx.path_search &mdash; cmipaccess 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            cmipaccess
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cmipaccess</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cmipaccess</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cmipaccess.spiritx.path_search</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cmipaccess.spiritx.path_search</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+
+<div class="viewcode-block" id="get_path_CMIP_data">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.path_search.get_path_CMIP_data.html#cmipaccess.spiritx.path_search.get_path_CMIP_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_path_CMIP_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                       <span class="n">experiment</span><span class="p">,</span> 
+                       <span class="n">realisation</span><span class="p">,</span> 
+                       <span class="n">variable</span><span class="p">,</span>
+                       <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">generation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns path to access gridded CMIP data from either CMIP5 or CMIP6</span>
+
+<span class="sd">    grid : default is &#39;gn&#39; native grid, only for CMIP6</span>
+<span class="sd">    freq : can be &#39;mon&#39;, &#39;day&#39;, &#39;3h&#39; or else, see CMIP documentation</span>
+<span class="sd">    source : can be &#39;spirit&#39; for local access or &#39;esgf&#39; for remote access</span>
+<span class="sd">    esgf_fallback : if source is &#39;spirit&#39; but the dataset is not found, tries to get remote data from esgf</span>
+<span class="sd">    generation : specify the generation wanted : either &#39;CMIP5&#39; or &#39;CMIP6&#39;. If None, it tries CMIP6 first then CMIP5 which can be slower. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">generation</span> <span class="o">==</span> <span class="s1">&#39;CMIP6&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                   <span class="n">experiment</span><span class="p">,</span> 
+                                   <span class="n">realisation</span><span class="p">,</span> 
+                                   <span class="n">variable</span><span class="p">,</span>
+                                   <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                   <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,)</span>
+    <span class="k">elif</span> <span class="n">generation</span> <span class="o">==</span> <span class="s1">&#39;CMIP5&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                   <span class="n">experiment</span><span class="p">,</span> 
+                                   <span class="n">realisation</span><span class="p">,</span> 
+                                   <span class="n">variable</span><span class="p">,</span>
+                                   <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,)</span>
+    <span class="k">elif</span> <span class="n">generation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="n">realisation</span><span class="p">,</span> 
+                                        <span class="n">variable</span><span class="p">,</span>
+                                        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,)</span>
+            <span class="k">return</span> <span class="n">paths</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span> 
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">get_path_CMIP5_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                                        <span class="n">experiment</span><span class="p">,</span> 
+                                        <span class="n">realisation</span><span class="p">,</span> 
+                                        <span class="n">variable</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,)</span>
+            <span class="k">return</span> <span class="n">paths</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Data not found&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Generation can only be None, &#39;CMIP5&#39; or &#39;CMIP6&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#########################</span>
+<span class="c1">#        CMIP6          #</span>
+<span class="c1">#########################</span>
+
+
+<div class="viewcode-block" id="get_path_CMIP6_data">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.path_search.get_path_CMIP6_data.html#cmipaccess.spiritx.path_search.get_path_CMIP6_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_path_CMIP6_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                        <span class="n">experiment</span><span class="p">,</span> 
+                        <span class="n">realisation</span><span class="p">,</span> 
+                        <span class="n">variable</span><span class="p">,</span> 
+                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">,</span>
+                        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the local path to the corresponding CMIP6 datasets if the data exist on spirit.</span>
+
+<span class="sd">    Realisation can be &quot;first&quot; in which case the first r1iXpXfX is selected if available, if not another realisation is chosen.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Checks if model data is on spirit</span>
+    <span class="n">path_list_to_model</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP6/CMIP/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_model</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no data for model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39; on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1">#Check available models?</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="n">center</span> <span class="o">=</span> <span class="n">path_list_to_model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Checks if model-experiment data is on spirit</span>
+    <span class="n">path_list_to_experiment</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP6/*/</span><span class="si">{</span><span class="n">center</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_experiment</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no &#39;</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&#39; data for model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39; on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1">#Check available models?</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="n">path_to_experiment</span> <span class="o">=</span> <span class="n">path_list_to_experiment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Checks if model-experiment-realisation data is on spirit</span>
+    <span class="n">realisations_available</span> <span class="o">=</span> <span class="p">[</span><span class="n">real</span> <span class="k">for</span> <span class="n">real</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path_to_experiment</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span>  <span class="n">real</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">realisation</span> <span class="o">==</span> <span class="s1">&#39;first&#39;</span><span class="p">:</span>
+        <span class="c1"># find r1i.p.f. realisation</span>
+        <span class="n">r1_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">realisations_available</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;r1i&#39;</span> <span class="ow">in</span> <span class="n">real</span> <span class="k">for</span> <span class="n">real</span> <span class="ow">in</span> <span class="n">realisations_available</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r1_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">realisation</span> <span class="o">=</span> <span class="n">realisations_available</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">realisation</span> <span class="o">=</span> <span class="n">r1_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">realisation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">realisations_available</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no realisation &#39;</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">&#39; for &#39;</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&#39; for model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39;on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
+                            <span class="sa">f</span><span class="s2">&quot;Available realisation for experiment &#39;</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&#39; and model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39; are:</span><span class="se">\n</span><span class="s2">     &quot;</span> <span class="o">+</span> <span class="n">print_list</span><span class="p">(</span><span class="n">realisations_available</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># Checks if model-experiment-realisation-variable data is on spirit</span>
+    <span class="n">path_list_to_variable</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_to_experiment</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">/*/</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_variable</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no variable &#39;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&#39; for this model-experiment-realisation combo on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1">#Check available models?</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="n">path_to_variable</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">path_list_to_variable</span> <span class="k">if</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">path</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Select appropriate grid. Tries &#39;gn&#39; if grid is None, else, select the first one available</span>
+    <span class="n">grids</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_to_variable</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">grid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;gn&#39;</span> <span class="ow">in</span> <span class="n">grids</span><span class="p">:</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="s1">&#39;gn&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="n">grids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">grid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grids</span> <span class="p">:</span> 
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Grid &#39;</span><span class="si">{</span><span class="n">grid</span><span class="si">}</span><span class="s2">&#39; not available. Available grids are </span><span class="se">\n</span><span class="s2">     &quot;</span> <span class="o">+</span><span class="n">print_list</span><span class="p">(</span><span class="n">grids</span><span class="p">)</span> 
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="c1"># Select data to specific frequency only</span>
+    <span class="n">pre_table_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_to_variable</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">grid</span><span class="si">}</span><span class="s2">/latest/*&quot;</span><span class="p">)</span>
+    <span class="n">final_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pre_table_paths</span> <span class="k">if</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">8</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Frequency not available&quot;</span> 
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_paths</span></div>
+
+
+<span class="c1">#########################</span>
+<span class="c1">#        CMIP5          #</span>
+<span class="c1">#########################</span>
+
+
+<div class="viewcode-block" id="get_path_CMIP5_data">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.path_search.get_path_CMIP5_data.html#cmipaccess.spiritx.path_search.get_path_CMIP5_data">[docs]</a>
+<span class="k">def</span> <span class="nf">get_path_CMIP5_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> 
+                        <span class="n">experiment</span><span class="p">,</span> 
+                        <span class="n">realisation</span><span class="p">,</span> 
+                        <span class="n">variable</span><span class="p">,</span> 
+                        <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;mon&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the local path to the corresponding CMIP5 datasets if the data exist on spirit.</span>
+
+<span class="sd">    Realisation can be &quot;first&quot; in which case the first r1iXpXfX is selected if available, if not another realisation is chosen.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Checks if model data is on spirit</span>
+    <span class="n">path_list_to_model</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP5/output/*/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_model</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no data for model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39; on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1">#Check available models?</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="n">center</span> <span class="o">=</span> <span class="n">path_list_to_model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># Checks if model-experiment data is on spirit</span>
+    <span class="n">path_list_to_experiment</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/bdd/CMIP5/output/</span><span class="si">{</span><span class="n">center</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_experiment</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no &#39;</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&#39; data for model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39; on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1">#Check available models?</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="n">path_to_experiment</span> <span class="o">=</span> <span class="n">path_list_to_experiment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># Checks if model-experiment-fres data is on spirit</span>
+    <span class="n">path_list_to_freq</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_to_experiment</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">freq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_freq</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Frequency &#39;</span><span class="si">{</span><span class="n">freq</span><span class="si">}</span><span class="s2">&#39; is not available</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1">#Check available freq?</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="n">path_to_freq</span> <span class="o">=</span> <span class="n">path_list_to_freq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Checks if model-experiment-realisation data is on spirit</span>
+    <span class="n">path_list_to_real</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_to_freq</span><span class="si">}</span><span class="s2">/*/*/*&quot;</span><span class="p">)</span>
+    <span class="n">realisations_available</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">real</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">real</span> <span class="ow">in</span> <span class="n">path_list_to_real</span> <span class="p">]))</span>
+    <span class="k">if</span> <span class="n">realisation</span> <span class="o">==</span> <span class="s1">&#39;first&#39;</span><span class="p">:</span>
+        <span class="c1"># find r1i.p.f. realisation</span>
+        <span class="n">r1_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">realisations_available</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;r1i&#39;</span> <span class="ow">in</span> <span class="n">real</span> <span class="k">for</span> <span class="n">real</span> <span class="ow">in</span> <span class="n">realisations_available</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r1_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">realisation</span> <span class="o">=</span> <span class="n">realisations_available</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">realisation</span> <span class="o">=</span> <span class="n">r1_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">realisation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">realisations_available</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no realisation &#39;</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">&#39; for &#39;</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&#39; for model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39;on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
+                            <span class="sa">f</span><span class="s2">&quot;Available realisation for experiment &#39;</span><span class="si">{</span><span class="n">experiment</span><span class="si">}</span><span class="s2">&#39; and model &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39; are:</span><span class="se">\n</span><span class="s2">     &quot;</span> <span class="o">+</span> <span class="n">print_list</span><span class="p">(</span><span class="n">realisations_available</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># Checks if model-experiment-realisation-variable data is on spirit</span>
+    <span class="n">path_list_to_variable</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_to_freq</span><span class="si">}</span><span class="s2">/*/*/</span><span class="si">{</span><span class="n">realisation</span><span class="si">}</span><span class="s2">/latest/</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_list_to_variable</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is no variable &#39;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&#39; for this model-experiment-realisation combo on Spiritx</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1">#Check available models?</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="n">path_to_variable</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">path_list_to_variable</span> <span class="k">if</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">path</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">final_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_to_variable</span><span class="si">}</span><span class="s2">/*&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The directory exists but data are missing&quot;</span> 
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_paths</span></div>
+
+
+
+<div class="viewcode-block" id="print_list">
+<a class="viewcode-back" href="../../../cmipaccess.spiritx.path_search.print_list.html#cmipaccess.spiritx.path_search.print_list">[docs]</a>
+<span class="k">def</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">model_list</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">     &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">model</span><span class="si">:</span><span class="s1">&lt;30</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">model_list</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;.nc&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model</span><span class="p">]))</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Robin Guillaume-Castel.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
