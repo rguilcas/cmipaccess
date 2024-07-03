@@ -1,7 +1,6 @@
 from __future__ import print_function
 import requests
 import xml.etree.ElementTree as ET
-import numpy
 
 # Author: Unknown
 # Script copied from the PANGEO project website: 

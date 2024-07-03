@@ -1,7 +1,5 @@
 from .esgf_data_access import esgf_search
 import numpy as np
-import os
-import glob
 
 def get_path_CMIP_data(model, 
                        experiment, 
