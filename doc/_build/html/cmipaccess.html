@@ -50,6 +50,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">cmipaccess package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="cmipaccess.esgf.html">cmipaccess.esgf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cmipaccess.local.html">cmipaccess.local package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cmipaccess.spiritx.html">cmipaccess.spiritx package</a></li>
 </ul>
 </li>
@@ -116,6 +117,10 @@
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.esgf.html#cmipaccess.esgf.find_available_data.find_realisations_experiment"><code class="docutils literal notranslate"><span class="pre">find_realisations_experiment()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cmipaccess.esgf.html#module-cmipaccess.esgf.path_cell_search">cmipaccess.esgf.path_cell_search module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.esgf.html#cmipaccess.esgf.path_cell_search.get_path_cell"><code class="docutils literal notranslate"><span class="pre">get_path_cell()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="cmipaccess.esgf.html#module-cmipaccess.esgf.path_search">cmipaccess.esgf.path_search module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.esgf.html#cmipaccess.esgf.path_search.get_path_CMIP5_data"><code class="docutils literal notranslate"><span class="pre">get_path_CMIP5_data()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.esgf.html#cmipaccess.esgf.path_search.get_path_CMIP6_data"><code class="docutils literal notranslate"><span class="pre">get_path_CMIP6_data()</span></code></a></li>
@@ -126,11 +131,34 @@
 <li class="toctree-l2"><a class="reference internal" href="cmipaccess.esgf.html#module-cmipaccess.esgf">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="cmipaccess.local.html">cmipaccess.local package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmipaccess.local.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmipaccess.local.html#module-cmipaccess.local.cell_files">cmipaccess.local.cell_files module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.cell_files.download_cell_file"><code class="docutils literal notranslate"><span class="pre">download_cell_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.cell_files.get_cell_data"><code class="docutils literal notranslate"><span class="pre">get_cell_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cmipaccess.local.html#module-cmipaccess.local.config">cmipaccess.local.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmipaccess.local.html#module-cmipaccess.local.global_data_access">cmipaccess.local.global_data_access module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series"><code class="docutils literal notranslate"><span class="pre">get_all_detrended_global_time_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable"><code class="docutils literal notranslate"><span class="pre">get_all_detrended_global_time_series_multivariable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_access.get_detrended_global_time_series"><code class="docutils literal notranslate"><span class="pre">get_detrended_global_time_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_access.get_global_time_series"><code class="docutils literal notranslate"><span class="pre">get_global_time_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_access.get_global_toa_energy_budget"><code class="docutils literal notranslate"><span class="pre">get_global_toa_energy_budget()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cmipaccess.local.html#module-cmipaccess.local.global_data_download">cmipaccess.local.global_data_download module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_download.download_all_realisations_all_models"><code class="docutils literal notranslate"><span class="pre">download_all_realisations_all_models()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_download.download_all_realisations_one_model"><code class="docutils literal notranslate"><span class="pre">download_all_realisations_one_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_download.download_multi_variables_timeseries"><code class="docutils literal notranslate"><span class="pre">download_multi_variables_timeseries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmipaccess.local.html#cmipaccess.local.global_data_download.download_single_timeseries"><code class="docutils literal notranslate"><span class="pre">download_single_timeseries()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cmipaccess.local.html#module-cmipaccess.local">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="cmipaccess.spiritx.html">cmipaccess.spiritx package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cmipaccess.spiritx.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess-spiritx-constants-module">cmipaccess.spiritx.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess-spiritx-global-data-access-module">cmipaccess.spiritx.global_data_access module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess-spiritx-global-data-download-module">cmipaccess.spiritx.global_data_download module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cmipaccess.spiritx.html#module-cmipaccess.spiritx.path_search">cmipaccess.spiritx.path_search module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess.spiritx.path_search.get_path_CMIP5_data"><code class="docutils literal notranslate"><span class="pre">get_path_CMIP5_data()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cmipaccess.spiritx.html#cmipaccess.spiritx.path_search.get_path_CMIP6_data"><code class="docutils literal notranslate"><span class="pre">get_path_CMIP6_data()</span></code></a></li>

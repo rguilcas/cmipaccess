@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    cmipaccess.esgf
+   cmipaccess.local
    cmipaccess.spiritx
 
 Submodules

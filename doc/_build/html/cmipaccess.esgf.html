@@ -21,7 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="cmipaccess.spiritx package" href="cmipaccess.spiritx.html" />
+    <link rel="next" title="cmipaccess.local package" href="cmipaccess.local.html" />
     <link rel="prev" title="cmipaccess package" href="cmipaccess.html" /> 
 </head>
 
@@ -50,6 +50,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="cmipaccess.html">cmipaccess package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cmipaccess.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cmipaccess.esgf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cmipaccess.local.html">cmipaccess.local package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cmipaccess.spiritx.html">cmipaccess.spiritx package</a></li>
 </ul>
 </li>
@@ -110,6 +111,25 @@ source_id=’IPSL-CM6A-LR’)</p>
 </dl>
 <p># results gives a list of files corresponding to the search
 ds = xr.open_dataset(results[0])</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>server</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to “<a class="reference external" href="https://esgf-node.llnl.gov/esg-search/search">https://esgf-node.llnl.gov/esg-search/search</a>”.</p></li>
+<li><p><strong>files_type</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to “OPENDAP”.</p></li>
+<li><p><strong>local_node</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to True.</p></li>
+<li><p><strong>project</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to “CMIP6”.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
+<li><p><strong>format</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to “application%2Fsolr%2Bjson”.</p></li>
+<li><p><strong>use_csrf</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -125,6 +145,33 @@ ds = xr.open_dataset(results[0])</p>
 <dt class="sig sig-object py" id="cmipaccess.esgf.find_available_data.find_realisations_experiment">
 <span class="sig-prename descclassname"><span class="pre">cmipaccess.esgf.find_available_data.</span></span><span class="sig-name descname"><span class="pre">find_realisations_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tas'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Amon'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/esgf/find_available_data.html#find_realisations_experiment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.esgf.find_available_data.find_realisations_experiment" title="Link to this definition"></a></dt>
 <dd><p>Finds the realisations where the experiment has been ran with the model and where the variable is available</p>
+</dd></dl>
+
+</section>
+<section id="module-cmipaccess.esgf.path_cell_search">
+<span id="cmipaccess-esgf-path-cell-search-module"></span><h2>cmipaccess.esgf.path_cell_search module<a class="headerlink" href="#module-cmipaccess.esgf.path_cell_search" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.esgf.path_cell_search.get_path_cell">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.esgf.path_cell_search.</span></span><span class="sig-name descname"><span class="pre">get_path_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/esgf/path_cell_search.html#get_path_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.esgf.path_cell_search.get_path_cell" title="Link to this definition"></a></dt>
+<dd><p>Finds the paths to a cell area file on esgf</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Climate model</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable of the area file required. Can be areacello or areacella</p></li>
+<li><p><strong>grid</strong> (<em>str</em>) – grid label (usually gn, gr1, …)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the variable is not areacello or areacello raises this error</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>html path to the area file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -169,7 +216,7 @@ generation : specify the generation wanted : either ‘CMIP5’ or ‘CMIP6’. 
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="cmipaccess.html" class="btn btn-neutral float-left" title="cmipaccess package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cmipaccess.spiritx.html" class="btn btn-neutral float-right" title="cmipaccess.spiritx package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cmipaccess.local.html" class="btn btn-neutral float-right" title="cmipaccess.local package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

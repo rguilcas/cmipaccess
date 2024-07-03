@@ -20,6 +20,14 @@ cmipaccess.esgf.find\_available\_data module
    :undoc-members:
    :show-inheritance:
 
+cmipaccess.esgf.path\_cell\_search module
+-----------------------------------------
+
+.. automodule:: cmipaccess.esgf.path_cell_search
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 cmipaccess.esgf.path\_search module
 -----------------------------------
 

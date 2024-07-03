@@ -23,6 +23,18 @@ def esgf_search(server="https://esgf-node.llnl.gov/esg-search/search",
                           source_id='IPSL-CM6A-LR')
     # results gives a list of files corresponding to the search
     ds = xr.open_dataset(results[0])
+
+    Args:
+        server (str, optional): _description_. Defaults to "https://esgf-node.llnl.gov/esg-search/search".
+        files_type (str, optional): _description_. Defaults to "OPENDAP".
+        local_node (bool, optional): _description_. Defaults to True.
+        project (str, optional): _description_. Defaults to "CMIP6".
+        verbose (bool, optional): _description_. Defaults to False.
+        format (str, optional): _description_. Defaults to "application%2Fsolr%2Bjson".
+        use_csrf (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        _type_: _description_
     """
     client = requests.session()
     payload = search

@@ -98,6 +98,18 @@
 <span class="sd">                          source_id=&#39;IPSL-CM6A-LR&#39;)</span>
 <span class="sd">    # results gives a list of files corresponding to the search</span>
 <span class="sd">    ds = xr.open_dataset(results[0])</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        server (str, optional): _description_. Defaults to &quot;https://esgf-node.llnl.gov/esg-search/search&quot;.</span>
+<span class="sd">        files_type (str, optional): _description_. Defaults to &quot;OPENDAP&quot;.</span>
+<span class="sd">        local_node (bool, optional): _description_. Defaults to True.</span>
+<span class="sd">        project (str, optional): _description_. Defaults to &quot;CMIP6&quot;.</span>
+<span class="sd">        verbose (bool, optional): _description_. Defaults to False.</span>
+<span class="sd">        format (str, optional): _description_. Defaults to &quot;application%2Fsolr%2Bjson&quot;.</span>
+<span class="sd">        use_csrf (bool, optional): _description_. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="n">search</span>
