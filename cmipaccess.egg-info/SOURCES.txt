@@ -8,6 +8,7 @@ cmipaccess.egg-info/PKG-INFO
 cmipaccess.egg-info/SOURCES.txt
 cmipaccess.egg-info/dependency_links.txt
 cmipaccess.egg-info/not-zip-safe
+cmipaccess.egg-info/requires.txt
 cmipaccess.egg-info/top_level.txt
 cmipaccess/esgf/__init__.py
 cmipaccess/esgf/esgf_data_access.py

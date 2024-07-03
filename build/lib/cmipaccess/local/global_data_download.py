@@ -1,8 +1,8 @@
 from cmath import exp
 from .. import esgf
-from ..local.config import GLOBAL_MEAN_DATA_DIR
-from ..local import get_cell_data
-from .. import get_path_CMIP_data
+from .config import GLOBAL_MEAN_DATA_DIR
+from .cell_files import get_cell_data
+from ..path_search import get_path_CMIP_data
 import xarray as xr 
 import warnings
 from tqdm import tqdm

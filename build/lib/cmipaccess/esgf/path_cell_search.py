@@ -1,4 +1,4 @@
-import cmipaccess as cmip
+from .. import esgf
 
 def get_path_cell(model, 
                   variable, 
@@ -24,7 +24,7 @@ def get_path_cell(model,
         table_id ='Ofx'
     
     for experiment in ['piControl', 'historical']:
-        list_path_cell = cmip.esgf.esgf_search(variable_id=variable,
+        list_path_cell = esgf.esgf_search(variable_id=variable,
                                             experiment_id=experiment,
                                             table_id=table_id,
                                             grid_label=grid_label,

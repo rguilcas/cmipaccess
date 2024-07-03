@@ -2,7 +2,6 @@ import xarray as xr
 import glob
 from tqdm import tqdm
 import cftime
-import os
 import numpy as np
 from ..tools import sort_realisations
 import pandas as pd

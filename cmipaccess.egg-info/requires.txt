@@ -1,0 +1,6 @@
+numpy
+pandas
+xarray
+esgf-pyclient
+cftime
+tqdm
