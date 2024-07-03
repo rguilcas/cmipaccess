@@ -5,22 +5,11 @@ import cftime
 import os
 import numpy as np
 from cmipaccess.tools import sort_realisations
-from ..local.global_data_download import download_area_file
 import pandas as pd
 
 
 from ..local.config import GLOBAL_MEAN_DATA_DIR    
 
-
-def get_area_data(model, variable, grid, generation='CMIP6',
-                  **kwargs):
-    file_path = f"{GLOBAL_MEAN_DATA_DIR}/{generation}/{model}/grids/{variable}_{model}_{grid}.nc"
-    if os.path.exists(file_path):
-        return xr.open_dataset(file_path)
-    else:
-        print('Area file not avaiable, trying to download it ...')
-        download_area_file(model, variable, grid, generation=generation, **kwargs)
-        return xr.open_dataset(file_path)
 
 
 
@@ -46,9 +35,27 @@ def get_global_time_series(model, experiment, variable, realisation, **kwargs):
 
 
 def get_all_detrended_global_time_series(model, experiment, variable, no_parent=False, 
-                                         remove_if_control_less_than='max', warn_too_short_control=True, 
+                                         remove_if_control_less_than='max', warn_too_short_control=False, 
                                          convert_time_to_datetime=True,
                                          progress=True, **kwargs):
+    """Returns all global mean time series for a given experiment, model and variable. The time series are corrected for control experiment drift.
+
+    Args:
+        model (str): Climate model
+        experiment (str): experiment
+        variable (str): variable name
+        no_parent (bool, optional): Specify if the experiment has no parent (required for amip experiments). Defaults to False.
+        remove_if_control_less_than (str or int, optional): does not load timeseries if parrallel control run is shorter than this value. Defaults to 'max'.
+        warn_too_short_control (bool, optional): Prints warning when control experiment is too short. Defaults to False.
+        convert_time_to_datetime (bool, optional): Converts cftime read with xarray to pandas datetime. Defaults to True.
+        progress (bool, optional): Shows a progressbar for all realisations. Defaults to True.
+
+    Raises:
+        ValueError: _description_
+
+    Returns:
+        _type_: _description_
+    """
     if no_parent:
         files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/*/{model}/{experiment}/*/{variable}_*")
     else: #detrending only works for CMIP6

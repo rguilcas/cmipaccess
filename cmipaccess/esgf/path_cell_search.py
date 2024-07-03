@@ -1,9 +1,9 @@
 import cmipaccess as cmip
 
-def get_path_area(model, 
+def get_path_cell(model, 
                   variable, 
                   grid_label):
-    """Finds the path to a cell area file
+    """Finds the paths to a cell area file on esgf
 
     Args:
         model (str): Climate model
@@ -16,6 +16,7 @@ def get_path_area(model,
     Returns:
         str: html path to the area file
     """
+    print('wo')
     if variable not in ['areacella','areacello']:
         raise ValueError('Variable can only be areacello or areacella')
     if variable=='areacella':
@@ -24,14 +25,13 @@ def get_path_area(model,
         table_id ='Ofx'
     
     for experiment in ['piControl', 'historical']:
-        list_path_area = cmip.esgf.esgf_search(variable_id=variable,
+        list_path_cell = cmip.esgf.esgf_search(variable_id=variable,
                                             experiment_id=experiment,
                                             table_id=table_id,
                                             grid_label=grid_label,
                                             source_id=model,)
-        if len(list_path_area)!=0:
+        if len(list_path_cell)!=0:
             break
-    if len(list_path_area) == 0:
+    if len(list_path_cell) == 0:
         raise ValueError('Area path not found in historical or piControl runs')
-    area_path = list_path_area[0]
-    return area_path
+    return list_path_cell

@@ -5,22 +5,11 @@ import cftime
 import os
 import numpy as np
 from cmipaccess.tools import sort_realisations
-from ..local.global_data_download import download_area_file
 import pandas as pd
 
 
 from ..local.config import GLOBAL_MEAN_DATA_DIR    
 
-
-def get_area_data(model, variable, grid, generation='CMIP6',
-                  **kwargs):
-    file_path = f"{GLOBAL_MEAN_DATA_DIR}/{generation}/{model}/grids/{variable}_{model}_{grid}.nc"
-    if os.path.exists(file_path):
-        return xr.open_dataset(file_path)
-    else:
-        print('Area file not avaiable, trying to download it ...')
-        download_area_file(model, variable, grid, generation=generation, **kwargs)
-        return xr.open_dataset(file_path)
 
 
 

@@ -2,7 +2,6 @@ from cmath import exp
 import cmipaccess.esgf as esgf
 import cmipaccess.spiritx as spiritx
 import cmipaccess as cmip
-from ..local.global_data_access import get_area_data
 from ..local.config import GLOBAL_MEAN_DATA_DIR
 import xarray as xr 
 import warnings
@@ -12,44 +11,6 @@ import os
 import glob
 
 
-def download_area_file(model, 
-                       variable,
-                       grid, 
-                       generation='CMIP6',
-                       overwrite=False,
-                       source = 'esgf',
-                       **kwargs):
-    """Download the file for cell area size
-
-    Args:
-        model (str): _description_
-        variable (str): _description_
-        grid (str): _description_
-        generation (str, optional): Generation of the models. For now only works with CMIP6 data. Defaults to 'CMIP6'.
-        overwrite (bool, optional): if True overwrites an existing file. Defaults to False.
-    """
-    path_out = f"{GLOBAL_MEAN_DATA_DIR}/{generation}/{model}/grids"
-    print(path_out)
-    if os.path.exists(path_out):
-        path_out_exists = True
-        path_out_file = glob.glob(f"{path_out}/{variable}_*")
-        if len(path_out_file)!=0 and not overwrite:
-            print("File already exists. Add overwrite=True, to overwrite it")
-            return
-    else:
-        path_out_exists = False
-    
-    path_data = cmip.esgf.get_path_area(model, 
-                                        variable,
-                                        grid)
-    if not path_out_exists : 
-        os.makedirs(path_out)
-    data_area = xr.open_dataset(path_data, **kwargs)
-    out_name = f"{variable}_{model}_{grid}.nc"
-    data_area.to_netcdf(f'{path_out}/{out_name}')
-    print(f'    --> File saved: {out_name}')
-
-    
 def download_single_timeseries(model, 
                                experiment, 
                                realisation, 
@@ -92,7 +53,7 @@ def download_single_timeseries(model,
         area_var = 'areacella'
     elif table_id=='Omon':
         area_var = 'areacello'
-    area = get_area_data(model, area_var, grid_label)[area_var].fillna(0)
+    area = cmip.local.get_cell_data(model, area_var, grid_label)[area_var].fillna(0)
     averaging_dims = area.dims
     # Compute global average
     data_global_mean = data_experiment[[variable]].weighted(area).mean(averaging_dims, keep_attrs=True)
