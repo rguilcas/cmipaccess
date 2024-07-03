@@ -13,7 +13,7 @@ from ..local.config import GLOBAL_MEAN_DATA_DIR
 
 
 
-def get_global_time_series(model, experiment, variable, realisation, **kwargs):
+def get_global_time_series(model, experiment, realisation, variable, **kwargs):
     """Return an xarray Dataset containing a global mean time series of the variable required.
 
     Args:
@@ -35,15 +35,33 @@ def get_global_time_series(model, experiment, variable, realisation, **kwargs):
 
 
 def get_all_detrended_global_time_series(model, experiment, variable, no_parent=False, 
-                                         remove_if_control_less_than='max', warn_too_short_control=True, 
+                                         remove_if_control_less_than='max', warn_too_short_control=False, 
                                          convert_time_to_datetime=True,
                                          progress=True, **kwargs):
+    """Returns all global mean time series for a given experiment, model and variable. The time series are corrected for control experiment drift.
+
+    Args:
+        model (str): Climate model
+        experiment (str): experiment
+        variable (str): variable name
+        no_parent (bool, optional): Specify if the experiment has no parent (required for amip experiments). Defaults to False.
+        remove_if_control_less_than (str or int, optional): does not load timeseries if parrallel control run is shorter than this value. Defaults to 'max'.
+        warn_too_short_control (bool, optional): Prints warning when control experiment is too short. Defaults to False.
+        convert_time_to_datetime (bool, optional): Converts cftime read with xarray to pandas datetime. Defaults to True.
+        progress (bool, optional): Shows a progressbar for all realisations. Defaults to True.
+
+    Raises:
+        ValueError: Raises an error when the timeseries have not been downloaded yet
+
+    Returns:
+        xr.Dataset: dataset containing the dedrifted global timeseries, along with the 
+    """
     if no_parent:
         files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/*/{model}/{experiment}/*/{variable}_*")
     else: #detrending only works for CMIP6
         files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/CMIP6/{model}/{experiment}/*/{variable}_*")
     if len(files)==0:
-        raise ValueError('Global mean data not readily available on spiritx')
+        raise ValueError('Global mean data not readily available locally. You can try downloading it with the various cmipaccess.local.download_ functions')
     realisations = sort_realisations([file.split('/')[-2] for file in files])
     all_control = dict()
     all_detrended_data = []
@@ -53,7 +71,7 @@ def get_all_detrended_global_time_series(model, experiment, variable, no_parent=
         iterable = realisations
     for realisation in iterable:
         # Load experiment data
-        experiment_data = get_global_time_series(model, experiment, variable, realisation, use_cftime=True, **kwargs)
+        experiment_data = get_global_time_series(model, experiment, realisation, variable, use_cftime=True, **kwargs)
         if not no_parent:
             # Get parent information and load control data
             parent_experiment_id = experiment_data.attrs['parent_experiment_id']
