@@ -87,7 +87,7 @@
 
 
 <div class="viewcode-block" id="get_global_time_series">
-<a class="viewcode-back" href="../../../cmipaccess.local.html#cmipaccess.local.global_data_access.get_global_time_series">[docs]</a>
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_global_time_series.html#cmipaccess.local.global_data_access.get_global_time_series">[docs]</a>
 <span class="k">def</span> <span class="nf">get_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">realisation</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an xarray Dataset containing a global mean time series of the variable required.</span>
 
@@ -111,7 +111,7 @@
 
 
 <div class="viewcode-block" id="get_all_detrended_global_time_series">
-<a class="viewcode-back" href="../../../cmipaccess.local.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series">[docs]</a>
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_all_detrended_global_time_series.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series">[docs]</a>
 <span class="k">def</span> <span class="nf">get_all_detrended_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                                          <span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">warn_too_short_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                                          <span class="n">convert_time_to_datetime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -202,7 +202,7 @@
 
 
 <div class="viewcode-block" id="get_detrended_global_time_series">
-<a class="viewcode-back" href="../../../cmipaccess.local.html#cmipaccess.local.global_data_access.get_detrended_global_time_series">[docs]</a>
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_detrended_global_time_series.html#cmipaccess.local.global_data_access.get_detrended_global_time_series">[docs]</a>
 <span class="k">def</span> <span class="nf">get_detrended_global_time_series</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span><span class="n">realisation</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the global time series of a variable with the control experiment drift removed.</span>
 <span class="sd">    The drift is computed as a linear trend in time of the control experiment parallel to the experiment.</span>
@@ -243,7 +243,7 @@
 
 
 <div class="viewcode-block" id="get_global_toa_energy_budget">
-<a class="viewcode-back" href="../../../cmipaccess.local.html#cmipaccess.local.global_data_access.get_global_toa_energy_budget">[docs]</a>
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_global_toa_energy_budget.html#cmipaccess.local.global_data_access.get_global_toa_energy_budget">[docs]</a>
 <span class="k">def</span> <span class="nf">get_global_toa_energy_budget</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                            <span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">warn_too_short_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                            <span class="n">convert_time_to_datetime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -278,7 +278,7 @@
 
 
 <div class="viewcode-block" id="get_all_detrended_global_time_series_multivariable">
-<a class="viewcode-back" href="../../../cmipaccess.local.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable">[docs]</a>
+<a class="viewcode-back" href="../../../cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable.html#cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable">[docs]</a>
 <span class="k">def</span> <span class="nf">get_all_detrended_global_time_series_multivariable</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="o">*</span><span class="n">variables</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                                          <span class="n">remove_if_control_less_than</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">warn_too_short_control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                                          <span class="n">progress</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">add_control_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
