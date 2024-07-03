@@ -1,8 +1,6 @@
 import cmipaccess.spiritx as spiritx
 import cmipaccess.esgf as esgf
-import numpy as np
-import os
-import glob
+
 
 def get_path_CMIP_data(model, 
                        experiment, 

@@ -161,7 +161,7 @@ def get_detrended_global_time_series(model, experiment,realisation, variable, **
 
 
 def get_global_toa_energy_budget(model, experiment, no_parent=False, 
-                           remove_if_control_less_than='max', warn_too_short_control=True, 
+                           remove_if_control_less_than='max', warn_too_short_control=False, 
                            convert_time_to_datetime=True,
                            progress = True, add_control_mean=False, **kwargs):
     """Load global mean time series of tas, rsut, rlut, rsdt and eei for the given model and experiment.
@@ -193,7 +193,7 @@ def get_global_toa_energy_budget(model, experiment, no_parent=False,
     return ds
 
 def get_all_detrended_global_time_series_multivariable(model, experiment, *variables, no_parent=False, 
-                                         remove_if_control_less_than='max', warn_too_short_control=True, 
+                                         remove_if_control_less_than='max', warn_too_short_control=False, 
                                          progress = True, add_control_mean=False,
                                          convert_time_to_datetime=True, **kwargs):
     """Return detrended time series of multiple variables

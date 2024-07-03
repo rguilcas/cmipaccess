@@ -1,6 +1,5 @@
 from cmath import exp
 import cmipaccess.esgf as esgf
-import cmipaccess.spiritx as spiritx
 import cmipaccess as cmip
 from ..local.config import GLOBAL_MEAN_DATA_DIR
 import xarray as xr 
