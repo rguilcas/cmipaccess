@@ -4,7 +4,7 @@ from tqdm import tqdm
 import cftime
 import os
 import numpy as np
-from cmipaccess.tools import sort_realisations
+from ..tools import sort_realisations
 import pandas as pd
 
 

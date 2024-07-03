@@ -1,5 +1,5 @@
-import cmipaccess.spiritx as spiritx
-import cmipaccess.esgf as esgf
+from . import spiritx
+from . import esgf
 
 
 def get_path_CMIP_data(model, 

@@ -1,5 +1,5 @@
 from pyesgf.search import SearchConnection
-from cmipaccess.tools import sort_realisations
+from ..tools import sort_realisations
 
 def find_models_experiment(experiment, 
                            variable='tas',

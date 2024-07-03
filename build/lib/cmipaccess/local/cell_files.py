@@ -2,7 +2,7 @@ from . import GLOBAL_MEAN_DATA_DIR
 import os
 import xarray as xr
 import glob 
-from cmipaccess.esgf.path_cell_search import get_path_cell
+from ..esgf.path_cell_search import get_path_cell
 
 def download_cell_file(model, 
                        variable,

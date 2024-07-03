@@ -1,7 +1,8 @@
 from cmath import exp
-import cmipaccess.esgf as esgf
-import cmipaccess as cmip
+from .. import esgf
 from ..local.config import GLOBAL_MEAN_DATA_DIR
+from ..local import get_cell_data
+from .. import get_path_CMIP_data
 import xarray as xr 
 import warnings
 from tqdm import tqdm
@@ -48,15 +49,15 @@ def download_single_timeseries(model,
     else:
         path_out_exists = False
     # Find data file
-    path_data = cmip.get_path_CMIP_data(model, 
-                                        experiment, 
-                                        realisation, 
-                                        variable,
-                                        grid=grid,
-                                        freq=freq,
-                                        source = source,
-                                        esgf_fallback=esgf_fallback,
-                                        generation=generation)
+    path_data = get_path_CMIP_data(model, 
+                                   experiment, 
+                                   realisation, 
+                                   variable,
+                                   grid=grid,
+                                   freq=freq,
+                                   source = source,
+                                   esgf_fallback=esgf_fallback,
+                                   generation=generation)
     if not path_out_exists : 
         os.makedirs(path_out)
     data_experiment = xr.open_mfdataset(path_data, **kwargs)
@@ -67,7 +68,7 @@ def download_single_timeseries(model,
         area_var = 'areacella'
     elif table_id=='Omon':
         area_var = 'areacello'
-    area = cmip.local.get_cell_data(model, area_var, grid_label)[area_var].fillna(0)
+    area = get_cell_data(model, area_var, grid_label)[area_var].fillna(0)
     averaging_dims = area.dims
     # Compute global average
     data_global_mean = data_experiment[[variable]].weighted(area).mean(averaging_dims, keep_attrs=True)
