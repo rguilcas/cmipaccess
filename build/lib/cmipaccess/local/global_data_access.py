@@ -26,11 +26,11 @@ def get_global_time_series(model, experiment, realisation, variable, **kwargs):
         ValueError: An error is raised if the global mean data is not found on spiritX.
 
     Returns:
-        xarray.Dataset: _description_
+        xarray.Dataset: Dataset containing the variable as a global time series.
     """
     file = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/*/{model}/{experiment}/{realisation}/{variable}_*")
     if len(file)==0:
-        raise ValueError('Global mean data not readily available on spiritx')
+        raise ValueError('Global mean data not readily available on spiritx. You can try downloading it with the various cmipaccess.local.download_ functions')
     return xr.open_dataset(file[0], **kwargs)
 
 
@@ -54,14 +54,14 @@ def get_all_detrended_global_time_series(model, experiment, variable, no_parent=
         ValueError: Raises an error when the timeseries have not been downloaded yet
 
     Returns:
-        xr.Dataset: dataset containing the dedrifted global timeseries, along with the 
+        xr.Dataset: dataset containing the global timeseries for all realisations with the control drift removed, along with the mean control value and the number of years of control run parallel to the experiment.
     """
     if no_parent:
         files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/*/{model}/{experiment}/*/{variable}_*")
     else: #detrending only works for CMIP6
         files = glob.glob(f"{GLOBAL_MEAN_DATA_DIR}/CMIP6/{model}/{experiment}/*/{variable}_*")
     if len(files)==0:
-        raise ValueError('Global mean data not readily available locally. You can try downloading it with the various cmipaccess.local.download_ functions')
+        raise ValueError('Global mean data not readily available locally. ')
     realisations = sort_realisations([file.split('/')[-2] for file in files])
     all_control = dict()
     all_detrended_data = []
@@ -80,7 +80,7 @@ def get_all_detrended_global_time_series(model, experiment, variable, no_parent=
             if control_data_key in all_control:
                 control_data = all_control[control_data_key]
             else:
-                control_data = get_global_time_series(model, parent_experiment_id, variable, parent_variant_label, use_cftime=True, **kwargs)
+                control_data = get_global_time_series(model, parent_experiment_id, parent_variant_label, variable, use_cftime=True, **kwargs)
                 all_control[control_data_key] = control_data
             # Get branch time in parent time units
             branch_time_int = experiment_data.attrs['branch_time_in_parent']
@@ -122,15 +122,25 @@ def get_all_detrended_global_time_series(model, experiment, variable, no_parent=
 
 
 
-def get_detrended_global_time_series(model, experiment, variable, realisation, **kwargs):
+def get_detrended_global_time_series(model, experiment,realisation, variable, **kwargs):
+    """Return the global time series of a variable with the control experiment drift removed.
+    The drift is computed as a linear trend in time of the control experiment parallel to the experiment.
 
+    Args:
+        model (str): Climate model name
+        experiment (str): Experiment id
+        variable (str): Variable id
+        realisation (str): member id
+
+    Returns:
+        xr.Dataset: dataset containing the global timeseries with the control drift removed, along with the mean control value and the number of years of control run parallel to the experiment.
+    """
     # Load experiment data
-    experiment_data = get_global_time_series(model, experiment, variable, realisation, use_cftime=True, **kwargs)
+    experiment_data = get_global_time_series(model, experiment, realisation, variable, use_cftime=True, **kwargs)
     # Get parent information and load control data
     parent_experiment_id = experiment_data.attrs['parent_experiment_id']
-    print(parent_experiment_id, parent_variant_label)
     parent_variant_label = experiment_data.attrs['parent_variant_label']
-    control_data = get_global_time_series(model, parent_experiment_id, variable, parent_variant_label, use_cftime=True, **kwargs)
+    control_data = get_global_time_series(model, parent_experiment_id, parent_variant_label, variable, use_cftime=True, **kwargs)
     # Get branch time in parent time units
     branch_time_int = experiment_data.attrs['branch_time_in_parent']
     parents_time_units = experiment_data.attrs['parent_time_units']
@@ -154,9 +164,21 @@ def get_global_toa_energy_budget(model, experiment, no_parent=False,
                            remove_if_control_less_than='max', warn_too_short_control=True, 
                            convert_time_to_datetime=True,
                            progress = True, add_control_mean=False, **kwargs):
-    """
-    Load global mean time series of tas, rsut, rlut, rsdt and eei for the given model and experiment.
+    """Load global mean time series of tas, rsut, rlut, rsdt and eei for the given model and experiment.
     Time series are by default detrended by the control experiment.
+
+    Args:
+        model (str): Climate model name
+        experiment (str): Experiment id
+        no_parent (bool, optional): Specify if the experiment has no parent experiment, required for amip-style experiments. Defaults to False.
+        remove_if_control_less_than (str or int, optional): does not load timeseries if parrallel control run is shorter than this value. Defaults to 'max'.
+        warn_too_short_control (bool, optional): Prints warning when control experiment is too short. Defaults to False.
+        convert_time_to_datetime (bool, optional): Converts cftime read with xarray to pandas datetime. Defaults to True.
+        progress (bool, optional): Shows a progressbar for all realisations. Defaults to True.
+        add_control_mean (bool, optional): Adds control mean to global time series to only have the trend removed. Defaults to False.
+
+    Returns:
+        xr.Dataset: dataset containing the main toa radiation budget variables with the piControl trend removed
     """
     ds = get_all_detrended_global_time_series_multivariable(model, experiment,
                                                             'tas','rlut','rsut','rsdt', no_parent=no_parent, 
@@ -174,6 +196,22 @@ def get_all_detrended_global_time_series_multivariable(model, experiment, *varia
                                          remove_if_control_less_than='max', warn_too_short_control=True, 
                                          progress = True, add_control_mean=False,
                                          convert_time_to_datetime=True, **kwargs):
+    """Return detrended time series of multiple variables
+
+    Args:
+        model (str): Climate model name
+        experiment (str): Experiment id
+        variables (str): variable names
+        no_parent (bool, optional): Specify if the experiment has no parent experiment, required for amip-style experiments. Defaults to False.
+        remove_if_control_less_than (str or int, optional): does not load timeseries if parrallel control run is shorter than this value. Defaults to 'max'.
+        warn_too_short_control (bool, optional): Prints warning when control experiment is too short. Defaults to False.
+        convert_time_to_datetime (bool, optional): Converts cftime read with xarray to pandas datetime. Defaults to True.
+        progress (bool, optional): Shows a progressbar for all realisations. Defaults to True.
+        add_control_mean (bool, optional): Adds control mean to global time series to only have the trend removed. Defaults to False.
+
+    Returns:
+        xr.Dataset: dataset containing multiple global mean variables with the control drift removed
+    """
     list_variables_data = []
     if progress:
         iterable = tqdm(variables)

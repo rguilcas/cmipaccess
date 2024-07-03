@@ -23,6 +23,21 @@ def download_single_timeseries(model,
                                overwrite = False,
                                area_path = None,
                                **kwargs):
+    """Downloads single global mean time series to local directory
+
+    Args:
+        model (_type_): _description_
+        experiment (_type_): _description_
+        realisation (_type_): _description_
+        variable (_type_): _description_
+        grid (_type_, optional): _description_. Defaults to None.
+        freq (str, optional): _description_. Defaults to 'mon'.
+        source (str, optional): _description_. Defaults to 'spiritx'.
+        esgf_fallback (bool, optional): _description_. Defaults to True.
+        generation (str, optional): _description_. Defaults to 'CMIP6'.
+        overwrite (bool, optional): _description_. Defaults to False.
+        area_path (_type_, optional): _description_. Defaults to None.
+    """
     # See if file already exists
     path_out = f"{GLOBAL_MEAN_DATA_DIR}/{generation}/{model}/{experiment}/{realisation}"
     if os.path.exists(path_out):
@@ -76,6 +91,20 @@ def download_multi_variables_timeseries(model,
                                         overwrite = False,
                                         area_path = None,
                                         **kwargs):
+    """Downloads global mean time series for multiple variables to local directory
+
+    Args:
+        model (_type_): _description_
+        experiment (_type_): _description_
+        realisation (_type_): _description_
+        grid (_type_, optional): _description_. Defaults to None.
+        freq (str, optional): _description_. Defaults to 'mon'.
+        source (str, optional): _description_. Defaults to 'spiritx'.
+        esgf_fallback (bool, optional): _description_. Defaults to True.
+        generation (str, optional): _description_. Defaults to 'CMIP6'.
+        overwrite (bool, optional): _description_. Defaults to False.
+        area_path (_type_, optional): _description_. Defaults to None.
+    """
     for variable in variables:
         try:
             download_single_timeseries(model, 
@@ -106,7 +135,19 @@ def download_all_realisations_one_model(model,
                                         overwrite = False,
                                         area_path=None,
                                         **kwargs):
-    
+    """Download timeseries for all available realisations for multiple variables
+
+    Args:
+        model (_type_): _description_
+        experiment (_type_): _description_
+        grid (_type_, optional): _description_. Defaults to None.
+        freq (str, optional): _description_. Defaults to 'mon'.
+        source (str, optional): _description_. Defaults to 'spiritx'.
+        esgf_fallback (bool, optional): _description_. Defaults to True.
+        generation (str, optional): _description_. Defaults to 'CMIP6'.
+        overwrite (bool, optional): _description_. Defaults to False.
+        area_path (_type_, optional): _description_. Defaults to None.
+    """
     realisations = esgf.find_realisations_experiment(model, 
                                                      experiment,
                                                      variable='tas',
@@ -137,6 +178,18 @@ def download_all_realisations_all_models(experiment,
                                          overwrite = False,
                                          area_path = None,
                                          **kwargs):
+    """Downloads global time series for all models and all experiments available for a given experiment
+
+    Args:
+        experiment (_type_): _description_
+        grid (_type_, optional): _description_. Defaults to None.
+        freq (str, optional): _description_. Defaults to 'mon'.
+        source (str, optional): _description_. Defaults to 'spiritx'.
+        esgf_fallback (bool, optional): _description_. Defaults to True.
+        generation (str, optional): _description_. Defaults to 'CMIP6'.
+        overwrite (bool, optional): _description_. Defaults to False.
+        area_path (_type_, optional): _description_. Defaults to None.
+    """
     
     models = esgf.find_models_experiment(experiment, 
                                          variable='tas',

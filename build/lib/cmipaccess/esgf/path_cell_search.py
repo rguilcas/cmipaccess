@@ -16,7 +16,6 @@ def get_path_cell(model,
     Returns:
         str: html path to the area file
     """
-    print('wo')
     if variable not in ['areacella','areacello']:
         raise ValueError('Variable can only be areacello or areacella')
     if variable=='areacella':
