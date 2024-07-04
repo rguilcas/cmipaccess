@@ -16,6 +16,8 @@ cmipaccess contains three main submodules to easily access CMIP5 and CMIP6 data.
    :caption: Contents:
 
    modules
+   cmipaccess
+   cmipaccess.local
 
 Indices and tables
 ==================
