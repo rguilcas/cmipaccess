@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cmipaccess.local package &mdash; cmipaccess 0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=48f8e935"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="cmipaccess.spiritx package" href="cmipaccess.spiritx.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cmipaccess
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cmipaccess.esgf.html">cmipaccess.esgf package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmipaccess.spiritx.html">cmipaccess.spiritx package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cmipaccess.local package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cmipaccess.local.cell_files">cmipaccess.local.cell_files module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.cell_files.download_cell_file"><code class="docutils literal notranslate"><span class="pre">download_cell_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.cell_files.get_cell_data"><code class="docutils literal notranslate"><span class="pre">get_cell_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cmipaccess.local.config">cmipaccess.local.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cmipaccess.local.global_data_access">cmipaccess.local.global_data_access module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_access.get_all_detrended_global_time_series"><code class="docutils literal notranslate"><span class="pre">get_all_detrended_global_time_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable"><code class="docutils literal notranslate"><span class="pre">get_all_detrended_global_time_series_multivariable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_access.get_detrended_global_time_series"><code class="docutils literal notranslate"><span class="pre">get_detrended_global_time_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_access.get_global_time_series"><code class="docutils literal notranslate"><span class="pre">get_global_time_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_access.get_global_toa_energy_budget"><code class="docutils literal notranslate"><span class="pre">get_global_toa_energy_budget()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cmipaccess.local.global_data_download">cmipaccess.local.global_data_download module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_download.download_all_realisations_all_models"><code class="docutils literal notranslate"><span class="pre">download_all_realisations_all_models()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_download.download_all_realisations_one_model"><code class="docutils literal notranslate"><span class="pre">download_all_realisations_one_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_download.download_multi_variables_timeseries"><code class="docutils literal notranslate"><span class="pre">download_multi_variables_timeseries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmipaccess.local.global_data_download.download_single_timeseries"><code class="docutils literal notranslate"><span class="pre">download_single_timeseries()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cmipaccess.local">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cmipaccess</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">cmipaccess.local package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cmipaccess.local.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cmipaccess-local-package">
+<h1>cmipaccess.local package<a class="headerlink" href="#cmipaccess-local-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-cmipaccess.local.cell_files">
+<span id="cmipaccess-local-cell-files-module"></span><h2>cmipaccess.local.cell_files module<a class="headerlink" href="#module-cmipaccess.local.cell_files" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.cell_files.download_cell_file">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.cell_files.</span></span><span class="sig-name descname"><span class="pre">download_cell_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CMIP6'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'esgf'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/cell_files.html#download_cell_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.cell_files.download_cell_file" title="Link to this definition"></a></dt>
+<dd><p>Download the file for cell area size</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – _description_</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – _description_</p></li>
+<li><p><strong>grid</strong> (<em>str</em>) – _description_</p></li>
+<li><p><strong>generation</strong> (<em>str</em><em>, </em><em>optional</em>) – Generation of the models. For now only works with CMIP6 data. Defaults to ‘CMIP6’.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True overwrites an existing file. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.cell_files.get_cell_data">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.cell_files.</span></span><span class="sig-name descname"><span class="pre">get_cell_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CMIP6'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/cell_files.html#get_cell_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.cell_files.get_cell_data" title="Link to this definition"></a></dt>
+<dd><p>Opens a dataset containing cell area data for a given model and grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>variable</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>grid</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>generation</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘CMIP6’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cmipaccess.local.config">
+<span id="cmipaccess-local-config-module"></span><h2>cmipaccess.local.config module<a class="headerlink" href="#module-cmipaccess.local.config" title="Link to this heading"></a></h2>
+<p>Defines the path where you want global mean timeseries to be stored</p>
+</section>
+<section id="module-cmipaccess.local.global_data_access">
+<span id="cmipaccess-local-global-data-access-module"></span><h2>cmipaccess.local.global_data_access module<a class="headerlink" href="#module-cmipaccess.local.global_data_access" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_access.get_all_detrended_global_time_series">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_access.</span></span><span class="sig-name descname"><span class="pre">get_all_detrended_global_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_if_control_less_than</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_too_short_control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_time_to_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_access.html#get_all_detrended_global_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_access.get_all_detrended_global_time_series" title="Link to this definition"></a></dt>
+<dd><p>Returns all global mean time series for a given experiment, model and variable. The time series are corrected for control experiment drift.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Climate model</p></li>
+<li><p><strong>experiment</strong> (<em>str</em>) – experiment</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable name</p></li>
+<li><p><strong>no_parent</strong> (<em>bool</em><em>, </em><em>optional</em>) – Specify if the experiment has no parent (required for amip experiments). Defaults to False.</p></li>
+<li><p><strong>remove_if_control_less_than</strong> (<em>str</em><em> or </em><em>int</em><em>, </em><em>optional</em>) – does not load timeseries if parrallel control run is shorter than this value. Defaults to ‘max’.</p></li>
+<li><p><strong>warn_too_short_control</strong> (<em>bool</em><em>, </em><em>optional</em>) – Prints warning when control experiment is too short. Defaults to False.</p></li>
+<li><p><strong>convert_time_to_datetime</strong> (<em>bool</em><em>, </em><em>optional</em>) – Converts cftime read with xarray to pandas datetime. Defaults to True.</p></li>
+<li><p><strong>progress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Shows a progressbar for all realisations. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Raises an error when the timeseries have not been downloaded yet</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dataset containing the global timeseries for all realisations with the control drift removed, along with the mean control value and the number of years of control run parallel to the experiment.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xr.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_access.</span></span><span class="sig-name descname"><span class="pre">get_all_detrended_global_time_series_multivariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_if_control_less_than</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_too_short_control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_control_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_time_to_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_access.html#get_all_detrended_global_time_series_multivariable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_access.get_all_detrended_global_time_series_multivariable" title="Link to this definition"></a></dt>
+<dd><p>Return detrended time series of multiple variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Climate model name</p></li>
+<li><p><strong>experiment</strong> (<em>str</em>) – Experiment id</p></li>
+<li><p><strong>variables</strong> (<em>str</em>) – variable names</p></li>
+<li><p><strong>no_parent</strong> (<em>bool</em><em>, </em><em>optional</em>) – Specify if the experiment has no parent experiment, required for amip-style experiments. Defaults to False.</p></li>
+<li><p><strong>remove_if_control_less_than</strong> (<em>str</em><em> or </em><em>int</em><em>, </em><em>optional</em>) – does not load timeseries if parrallel control run is shorter than this value. Defaults to ‘max’.</p></li>
+<li><p><strong>warn_too_short_control</strong> (<em>bool</em><em>, </em><em>optional</em>) – Prints warning when control experiment is too short. Defaults to False.</p></li>
+<li><p><strong>convert_time_to_datetime</strong> (<em>bool</em><em>, </em><em>optional</em>) – Converts cftime read with xarray to pandas datetime. Defaults to True.</p></li>
+<li><p><strong>progress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Shows a progressbar for all realisations. Defaults to True.</p></li>
+<li><p><strong>add_control_mean</strong> (<em>bool</em><em>, </em><em>optional</em>) – Adds control mean to global time series to only have the trend removed. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataset containing multiple global mean variables with the control drift removed</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xr.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_access.get_detrended_global_time_series">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_access.</span></span><span class="sig-name descname"><span class="pre">get_detrended_global_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_access.html#get_detrended_global_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_access.get_detrended_global_time_series" title="Link to this definition"></a></dt>
+<dd><p>Return the global time series of a variable with the control experiment drift removed.
+The drift is computed as a linear trend in time of the control experiment parallel to the experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Climate model name</p></li>
+<li><p><strong>experiment</strong> (<em>str</em>) – Experiment id</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – Variable id</p></li>
+<li><p><strong>realisation</strong> (<em>str</em>) – member id</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataset containing the global timeseries with the control drift removed, along with the mean control value and the number of years of control run parallel to the experiment.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xr.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_access.get_global_time_series">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_access.</span></span><span class="sig-name descname"><span class="pre">get_global_time_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_access.html#get_global_time_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_access.get_global_time_series" title="Link to this definition"></a></dt>
+<dd><p>Return an xarray Dataset containing a global mean time series of the variable required.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Climate model</p></li>
+<li><p><strong>experiment</strong> (<em>str</em>) – Experiment id</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable name</p></li>
+<li><p><strong>realisation</strong> (<em>str</em>) – member id</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – An error is raised if the global mean data is not found on spiritX.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dataset containing the variable as a global time series.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_access.get_global_toa_energy_budget">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_access.</span></span><span class="sig-name descname"><span class="pre">get_global_toa_energy_budget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_if_control_less_than</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_too_short_control</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_time_to_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_control_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_access.html#get_global_toa_energy_budget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_access.get_global_toa_energy_budget" title="Link to this definition"></a></dt>
+<dd><p>Load global mean time series of tas, rsut, rlut, rsdt and eei for the given model and experiment.
+Time series are by default detrended by the control experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Climate model name</p></li>
+<li><p><strong>experiment</strong> (<em>str</em>) – Experiment id</p></li>
+<li><p><strong>no_parent</strong> (<em>bool</em><em>, </em><em>optional</em>) – Specify if the experiment has no parent experiment, required for amip-style experiments. Defaults to False.</p></li>
+<li><p><strong>remove_if_control_less_than</strong> (<em>str</em><em> or </em><em>int</em><em>, </em><em>optional</em>) – does not load timeseries if parrallel control run is shorter than this value. Defaults to ‘max’.</p></li>
+<li><p><strong>warn_too_short_control</strong> (<em>bool</em><em>, </em><em>optional</em>) – Prints warning when control experiment is too short. Defaults to False.</p></li>
+<li><p><strong>convert_time_to_datetime</strong> (<em>bool</em><em>, </em><em>optional</em>) – Converts cftime read with xarray to pandas datetime. Defaults to True.</p></li>
+<li><p><strong>progress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Shows a progressbar for all realisations. Defaults to True.</p></li>
+<li><p><strong>add_control_mean</strong> (<em>bool</em><em>, </em><em>optional</em>) – Adds control mean to global time series to only have the trend removed. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataset containing the main toa radiation budget variables with the piControl trend removed</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xr.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cmipaccess.local.global_data_download">
+<span id="cmipaccess-local-global-data-download-module"></span><h2>cmipaccess.local.global_data_download module<a class="headerlink" href="#module-cmipaccess.local.global_data_download" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_download.download_all_realisations_all_models">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_download.</span></span><span class="sig-name descname"><span class="pre">download_all_realisations_all_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CMIP6'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_download.html#download_all_realisations_all_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_download.download_all_realisations_all_models" title="Link to this definition"></a></dt>
+<dd><p>Downloads global time series for all models and all experiments available for a given experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experiment</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>grid</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+<li><p><strong>freq</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘mon’.</p></li>
+<li><p><strong>source</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘spiritx’.</p></li>
+<li><p><strong>esgf_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to True.</p></li>
+<li><p><strong>generation</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘CMIP6’.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
+<li><p><strong>area_path</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_download.download_all_realisations_one_model">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_download.</span></span><span class="sig-name descname"><span class="pre">download_all_realisations_one_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CMIP6'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_download.html#download_all_realisations_one_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_download.download_all_realisations_one_model" title="Link to this definition"></a></dt>
+<dd><p>Download timeseries for all available realisations for multiple variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>experiment</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>grid</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+<li><p><strong>freq</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘mon’.</p></li>
+<li><p><strong>source</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘spiritx’.</p></li>
+<li><p><strong>esgf_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to True.</p></li>
+<li><p><strong>generation</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘CMIP6’.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
+<li><p><strong>area_path</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_download.download_multi_variables_timeseries">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_download.</span></span><span class="sig-name descname"><span class="pre">download_multi_variables_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CMIP6'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_download.html#download_multi_variables_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_download.download_multi_variables_timeseries" title="Link to this definition"></a></dt>
+<dd><p>Downloads global mean time series for multiple variables to local directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>experiment</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>realisation</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>grid</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+<li><p><strong>freq</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘mon’.</p></li>
+<li><p><strong>source</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘spiritx’.</p></li>
+<li><p><strong>esgf_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to True.</p></li>
+<li><p><strong>generation</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘CMIP6’.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
+<li><p><strong>area_path</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cmipaccess.local.global_data_download.download_single_timeseries">
+<span class="sig-prename descclassname"><span class="pre">cmipaccess.local.global_data_download.</span></span><span class="sig-name descname"><span class="pre">download_single_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realisation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spiritx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esgf_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CMIP6'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmipaccess/local/global_data_download.html#download_single_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cmipaccess.local.global_data_download.download_single_timeseries" title="Link to this definition"></a></dt>
+<dd><p>Downloads single global mean time series to local directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>experiment</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>realisation</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>variable</strong> (<em>_type_</em>) – _description_</p></li>
+<li><p><strong>grid</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+<li><p><strong>freq</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘mon’.</p></li>
+<li><p><strong>source</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘spiritx’.</p></li>
+<li><p><strong>esgf_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to True.</p></li>
+<li><p><strong>generation</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to ‘CMIP6’.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
+<li><p><strong>area_path</strong> (<em>_type_</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-cmipaccess.local">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cmipaccess.local" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cmipaccess.spiritx.html" class="btn btn-neutral float-left" title="cmipaccess.spiritx package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Robin Guillaume-Castel.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
