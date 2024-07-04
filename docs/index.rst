@@ -4,6 +4,11 @@
    contain the root `toctree` directive.
 
 Welcome to cmipaccess's documentation!
+
+cmipaccess contains three main submodules to easily access CMIP5 and CMIP6 data.
+- cmipaccess.esgf to access data online through esgf directly
+- cmipaccess.spiritx to access data on spiritx cluster
+- cmipaccess.local to download and manage global time series locally.
 ======================================
 
 .. toctree::
