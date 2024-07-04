@@ -21,7 +21,6 @@ def download_single_timeseries(model,
                                esgf_fallback=True,
                                generation='CMIP6',
                                overwrite = False,
-                               area_path = None,
                                **kwargs):
     """Downloads single global mean time series to local directory
 
