@@ -23,13 +23,15 @@ def download_cell_file(model,
     path_out = f"{GLOBAL_MEAN_DATA_DIR}/{generation}/{model}/grids"
     if os.path.exists(path_out):
         path_out_exists = True
-        path_out_file = glob.glob(f"{path_out}/{variable}_*")
+        path_out_file = glob.glob(f"{path_out}/{variable}_{model}_{grid}.nc")
         if len(path_out_file)!=0 and not overwrite:
             print("File already exists. Add overwrite=True, to overwrite it")
             return
     else:
         path_out_exists = False
     
+
+
     list_path_data = get_path_cell(model, 
                               variable,
                               grid)
