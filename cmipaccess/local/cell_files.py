@@ -3,6 +3,7 @@ import os
 import xarray as xr
 import glob 
 from ..esgf.path_cell_search import get_path_cell
+from ..spiritx.path_search import get_path_area
 
 def download_cell_file(model, 
                        variable,
@@ -29,20 +30,22 @@ def download_cell_file(model,
             return
     else:
         path_out_exists = False
-    
-
-
-    list_path_data = get_path_cell(model, 
-                              variable,
-                              grid)
-    if not path_out_exists : 
-        os.makedirs(path_out)
-    for path_data in list_path_data:
-        try:
-            data_area = xr.open_dataset(path_data, **kwargs)
-            break
-        except:
-            print('Area file failed to save. Trying next one...')
+   
+    try:
+        get_path_area(model, variable, grid)
+        data_area = xr.open_dataset(path_data, **kwargs)
+    except:
+        list_path_data = get_path_cell(model, 
+                                      variable,
+                                      grid)
+        if not path_out_exists : 
+            os.makedirs(path_out)
+        for path_data in list_path_data:
+            try:
+                data_area = xr.open_dataset(path_data, **kwargs)
+                break
+            except:
+                print('Area file failed to save. Trying next one...')
     out_name = f"{variable}_{model}_{grid}.nc"
     data_area.to_netcdf(f'{path_out}/{out_name}')
     print(f'    --> File saved: {out_name}')

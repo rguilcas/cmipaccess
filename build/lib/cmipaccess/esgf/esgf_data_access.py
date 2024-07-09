@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 # "https://esgf-data.dkrz.de/esg-search/search" 
 # "https://esgf-node.llnl.gov/esg-search/search"
-def esgf_search(server="https://esgf-data.dkrz.de/esg-search/search",
+def esgf_search(server="https://esgf-node.llnl.gov/esg-search/search",
                 files_type="OPENDAP", local_node=True, project="CMIP6",
                 verbose=False, format="application%2Fsolr%2Bjson",
                 use_csrf=False, **search):

@@ -2,6 +2,43 @@ import numpy as np
 import os
 import glob
 
+
+
+def get_path_area(model, 
+                  variable,
+                  grid):
+    """Returns path to area file in spiritx
+
+    Args:
+        model (str): climate model
+        variable (str): variable of the cell data : can be areacello or areacella
+        grid (str): grid id
+
+
+    Returns:
+        str: path to the grid on spiritx if found
+    """
+    if variable == 'areacello':
+        table='Ofx'
+    elif variable == 'areacella':
+        table='fx'
+    else:
+        raise ValueError('Variable needs to be areacello or areacella')
+    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/piControl/*/{table}/{variable}/{grid}/latest')
+    if len(list_area) != 0:
+        return list_area[0]
+    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/historical/*/{table}/{variable}/{grid}/latest')
+    if len(list_area) != 0:
+        return list_area[0]
+    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/*/*/{table}/{variable}/{grid}/latest')
+    if len(list_area) != 0:
+        return list_area[0]
+    list_area = glob.glob(f'/bdd/*/CMIP/*/{model}/piControl/*/{table}/{variable}/{grid}/latest')
+    if len(list_area) != 0:
+        return list_area[0]
+    raise ValueError('Area file not found on spiritx')
+
+
 def get_path_CMIP_data(model, 
                        experiment, 
                        realisation, 
