@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 # "https://esgf-node.llnl.gov/esg-search/search"
 # "https://aims2.llnl.gov/esg-search/search"
 # "https://esgf-node.ipsl.upmc.fr/esg-search/search"
+# "https://esg1.umr-cnrm.fr/esg-search/search"
 # 
 def esgf_search(server= "https://esgf-data.dkrz.de/esg-search/search",
                 files_type="OPENDAP", local_node=True, project="CMIP6",

@@ -32,7 +32,7 @@ def download_cell_file(model,
         path_out_exists = False
    
     try:
-        get_path_area(model, variable, grid)
+        path_data = get_path_area(model, variable, grid)
         data_area = xr.open_dataset(path_data, **kwargs)
     except:
         list_path_data = get_path_cell(model, 

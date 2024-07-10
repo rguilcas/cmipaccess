@@ -24,16 +24,16 @@ def get_path_area(model,
         table='fx'
     else:
         raise ValueError('Variable needs to be areacello or areacella')
-    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/piControl/*/{table}/{variable}/{grid}/latest')
+    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/piControl/*/{table}/{variable}/{grid}/latest/*')
     if len(list_area) != 0:
         return list_area[0]
-    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/historical/*/{table}/{variable}/{grid}/latest')
+    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/historical/*/{table}/{variable}/{grid}/latest/*')
     if len(list_area) != 0:
         return list_area[0]
-    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/*/*/{table}/{variable}/{grid}/latest')
+    list_area = glob.glob(f'/bdd/CMIP6/CMIP/*/{model}/*/*/{table}/{variable}/{grid}/latest/*')
     if len(list_area) != 0:
         return list_area[0]
-    list_area = glob.glob(f'/bdd/*/CMIP/*/{model}/piControl/*/{table}/{variable}/{grid}/latest')
+    list_area = glob.glob(f'/bdd/*/CMIP/*/{model}/piControl/*/{table}/{variable}/{grid}/latest/*')
     if len(list_area) != 0:
         return list_area[0]
     raise ValueError('Area file not found on spiritx')

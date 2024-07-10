@@ -67,6 +67,7 @@ def download_single_timeseries(model,
         area_var = 'areacella'
     elif table_id=='Omon':
         area_var = 'areacello'
+
     area = get_cell_data(model, area_var, grid_label)[area_var].fillna(0)
     averaging_dims = area.dims
     # Compute global average
