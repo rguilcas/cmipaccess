@@ -10,6 +10,7 @@ def get_path_CMIP_data(model,
                        freq='mon',
                        source = 'spiritx',
                        esgf_fallback=True,
+                       esgf_server=None,
                        generation=None):
     """
     Returns path to access gridded CMIP data from either CMIP5 or CMIP6
@@ -28,7 +29,7 @@ def get_path_CMIP_data(model,
                                     variable,
                                     grid=grid,
                                     freq=freq,
-                                    generation=generation)
+                                    generation=generation,)
         except:
             if esgf_fallback:
                 return esgf.get_path_CMIP_data(model, 
@@ -37,6 +38,7 @@ def get_path_CMIP_data(model,
                                    variable,
                                    freq=freq,
                                    generation=generation,
+                                   server=esgf_server
                                    )
     elif source == 'esgf':
         return esgf.get_path_CMIP_data(model, 
@@ -45,6 +47,7 @@ def get_path_CMIP_data(model,
                                    variable,
                                    freq=freq,
                                    generation=generation,
+                                   server=esgf_server
                                    )
     else:
         raise ValueError("Source can only be spiritx or esgf")

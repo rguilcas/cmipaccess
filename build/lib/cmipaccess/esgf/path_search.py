@@ -1,5 +1,7 @@
 from .esgf_data_access import esgf_search
 import numpy as np
+from pyesgf.search import SearchConnection
+
 
 def get_path_CMIP_data(model, 
                        experiment, 
@@ -8,6 +10,7 @@ def get_path_CMIP_data(model,
                        grid=None,
                        freq='mon',
                        latest=True,
+                       server=None,
                        generation=None):
     """
     Returns path to access gridded CMIP data from either CMIP5 or CMIP6
@@ -25,9 +28,10 @@ def get_path_CMIP_data(model,
                                    variable,
                                    latest=latest,
                                    grid=grid,
-                                   freq=freq)
+                                   freq=freq,
+                                   server=server)
     elif generation == 'CMIP5':
-        return get_path_CMIP6_data(model, 
+        return get_path_CMIP5_data(model, 
                                    experiment, 
                                    realisation, 
                                    variable,
@@ -41,6 +45,7 @@ def get_path_CMIP_data(model,
                                         variable,
                                         grid=grid,
                                         latest=latest,
+                                        server=server,
                                         freq=freq)
             return paths
         except ValueError:
@@ -69,37 +74,58 @@ def get_path_CMIP6_data(model,
                         variable,
                         freq='mon', 
                         latest=True,
-                        grid=None):        
+                        server=None,
+                        grid='gn'):        
         """
         Returns the remote ESGF path to the corresponding datasets they exist on ESGF.
         """
          # Checks model availability
-        all_paths = esgf_search(variable_id=variable,
-                                experiment_id=experiment, 
-                                member_id=realisation,
-                                frequency=freq,
-                                source_id=model,
-                                latest=latest,)
-        if len(all_paths) == 0:
-            raise ValueError("No such data exist on ESGF")
-        # select grid
-        grids = list(set([path.split('/')[14] for path in all_paths]))
-        if grid is None:
-            if 'gn' in grids:
-                grid = 'gn'
+        
+        def get_context(conn):
+            facets = 'source_id,member_id,data_node'
+            ctx = conn.new_context(
+                        project='CMIP6',
+                        source_id=model,
+                        experiment_id=experiment,
+                        variable=variable,
+                        frequency=freq,
+                        grid_label=grid,
+                        latest=latest,
+                        variant_label=realisation,
+                        facets='facets',)
+            return ctx
+        data_source = ["https://esgf-node.llnl.gov/esg-search",
+                       "https://esgf-data3.ceda.ac.uk/esg-search",
+                       "https://aims2.llnl.gov/esg-search",
+                       "https://esgf-node.ipsl.upmc.fr/esg-search",
+                       "https://esg1.umr-cnrm.fr/esg-search",
+                       "https://esgf-data.dkrz.de/esg-search" ,
+                        ]
+        for source in data_source:
+            conn = SearchConnection(source, distrib=True)
+            ctx = get_context(conn)
+            hits = ctx.hit_count
+            if hits > 0:
+                result_datasets = ctx.search()
+                results_dict = dict()
+                for dataset in result_datasets:#[0]
+                    files = dataset.file_context().search()
+                    urls = []
+                    for file in files:
+                        urls.append(file.opendap_url)
+                    if server is None:
+                        return urls
+                    results_dict[dataset.dataset_id.split('|')[-1]] = urls
             else:
-                grid = grids[0]
-        all_paths = [path for path in all_paths if path.split('/')[14] == grid]
-        # find longest source available
-        sources = [path.split('/')[2] for path in all_paths]
-        list_durations = []
-        for source in sources:
-            dates_source = [path.split('_')[-1][:-3].split('-') for path in all_paths if source in path]
-            duration = sum([int(date[1][:-2]) - int(date[0][:-2]) for date in dates_source])
-            list_durations.append(duration)
-        longest_source = sources[np.argmax(list_durations)]
-        return [path for path in all_paths if longest_source in path]
-    
+                continue
+            keys = list(results_dict.keys())
+            server_key = [k for k in keys if server in k]
+            if len(server_key) == 0:
+                print("Server not available. Returning first found urls. Available servers are :")
+                print(keys)
+                return results_dict[keys[0]]
+            return  results_dict[server_key[0]]
+        raise ValueError('Data not found on ESGF')
 
 
 #########################

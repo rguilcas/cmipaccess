@@ -47,6 +47,7 @@ def download_cell_file(model,
             except:
                 print('Area file failed to save. Trying next one...')
     out_name = f"{variable}_{model}_{grid}.nc"
+    os.makedirs(path_out)
     data_area.to_netcdf(f'{path_out}/{out_name}')
     print(f'    --> File saved: {out_name}')
 

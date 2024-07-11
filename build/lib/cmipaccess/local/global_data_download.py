@@ -21,6 +21,7 @@ def download_single_timeseries(model,
                                esgf_fallback=True,
                                generation='CMIP6',
                                overwrite = False,
+                               esgf_server=None,
                                **kwargs):
     """Downloads single global mean time series to local directory
 
@@ -56,6 +57,7 @@ def download_single_timeseries(model,
                                    freq=freq,
                                    source = source,
                                    esgf_fallback=esgf_fallback,
+                                   esgf_server=esgf_server,
                                    generation=generation)
     if not path_out_exists : 
         os.makedirs(path_out)
@@ -87,6 +89,7 @@ def download_multi_variables_timeseries(model,
                                         freq='mon',
                                         source = 'spiritx',
                                         esgf_fallback=True,
+                                        esgf_server=None,
                                         generation='CMIP6',
                                         overwrite = False,
                                         area_path = None,
@@ -118,6 +121,7 @@ def download_multi_variables_timeseries(model,
                                     generation=generation,
                                     overwrite = overwrite,
                                     area_path=area_path,
+                                    esgf_server=esgf_server,
                                     **kwargs)
         except Exception as e:
             print(f"   !!FAIL !! {model} {experiment} {realisation} {variable} ")
@@ -133,6 +137,7 @@ def download_all_realisations_one_model(model,
                                         esgf_fallback=True,
                                         generation='CMIP6',
                                         overwrite = False,
+                                        esgf_server=None,
                                         area_path=None,
                                         **kwargs):
     """Download timeseries for all available realisations for multiple variables
@@ -164,6 +169,7 @@ def download_all_realisations_one_model(model,
                                             esgf_fallback=esgf_fallback,
                                             generation=generation,
                                             overwrite = overwrite,
+                                            esgf_server=esgf_server,
                                             area_path=area_path,
                                             **kwargs)
 
@@ -177,6 +183,7 @@ def download_all_realisations_all_models(experiment,
                                          generation='CMIP6',
                                          overwrite = False,
                                          area_path = None,
+                                         esgf_server=None,
                                          **kwargs):
     """Downloads global time series for all models and all experiments available for a given experiment
 
@@ -189,6 +196,7 @@ def download_all_realisations_all_models(experiment,
         generation (str, optional): _description_. Defaults to 'CMIP6'.
         overwrite (bool, optional): _description_. Defaults to False.
         area_path (_type_, optional): _description_. Defaults to None.
+        esgf_server (str, optional): specicy the esgf erver to find the data
     """
     
     models = esgf.find_models_experiment(experiment, 
@@ -206,4 +214,5 @@ def download_all_realisations_all_models(experiment,
                                             generation=generation,
                                             overwrite = overwrite,
                                             area_path=area_path,
+                                            esgf_server=esgf_server,
                                             **kwargs)
