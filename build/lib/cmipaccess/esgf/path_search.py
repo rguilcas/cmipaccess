@@ -95,34 +95,41 @@ def get_path_CMIP6_data(model,
                         facets='facets',)
             return ctx
         data_source = ["https://esgf-node.llnl.gov/esg-search",
-                       "https://esgf-data3.ceda.ac.uk/esg-search",
-                       "https://aims2.llnl.gov/esg-search",
+                    #    "https://esgf-data3.ceda.ac.uk/esg-search",
+                    #    "https://aims2.llnl.gov/esg-search",
                        "https://esgf-node.ipsl.upmc.fr/esg-search",
-                       "https://esg1.umr-cnrm.fr/esg-search",
+                    #    "https://esg1.umr-cnrm.fr/esg-search",
                        "https://esgf-data.dkrz.de/esg-search" ,
                         ]
         for source in data_source:
+            print(source)
             conn = SearchConnection(source, distrib=True)
             ctx = get_context(conn)
             hits = ctx.hit_count
+            print(hits)
             if hits > 0:
                 result_datasets = ctx.search()
-                results_dict = dict()
-                all_server_name = []
+                all_server_name = [dataset.dataset_id.split('|')[-1] for dataset in result_datasets]
+                if server is None:
+                    server_required = all_server_name[0]
+                else:
+                    server_required = [k for k in all_server_name if server in k]
+                    if len(server_required) == 0:
+                        print(f"Server not available on {source}. Available servers are :")
+                        print(all_server_name)            
+                        continue
+                    else:
+                        server_required = server_required[0]
                 for dataset in result_datasets:#[0]
-                    files = dataset.file_context().search()
                     dataset_name = dataset.dataset_id.split('|')[-1]
-                    all_server_name.append(dataset_name)
-                    if server is None or server in dataset_name:
+                    if dataset_name == server_required:
+                        files = dataset.file_context().search()
                         urls = []
                         for file in files:
                             urls.append(file.opendap_url)
                             return urls
-                        results_dict[dataset_name] = urls
             else:
                 continue
-            print("Server not available. Available servers are :")
-            print(all_server_name)
         raise ValueError('Data not found on ESGF')
 
 
