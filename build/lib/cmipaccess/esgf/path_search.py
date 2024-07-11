@@ -108,23 +108,21 @@ def get_path_CMIP6_data(model,
             if hits > 0:
                 result_datasets = ctx.search()
                 results_dict = dict()
+                all_server_name = []
                 for dataset in result_datasets:#[0]
                     files = dataset.file_context().search()
-                    urls = []
-                    for file in files:
-                        urls.append(file.opendap_url)
-                    if server is None:
-                        return urls
-                    results_dict[dataset.dataset_id.split('|')[-1]] = urls
+                    dataset_name = dataset.dataset_id.split('|')[-1]
+                    all_server_name.append(dataset_name)
+                    if server is None or server in dataset_name:
+                        urls = []
+                        for file in files:
+                            urls.append(file.opendap_url)
+                            return urls
+                        results_dict[dataset_name] = urls
             else:
                 continue
-            keys = list(results_dict.keys())
-            server_key = [k for k in keys if server in k]
-            if len(server_key) == 0:
-                print("Server not available. Returning first found urls. Available servers are :")
-                print(keys)
-                return results_dict[keys[0]]
-            return  results_dict[server_key[0]]
+            print("Server not available. Available servers are :")
+            print(all_server_name)
         raise ValueError('Data not found on ESGF')
 
 
