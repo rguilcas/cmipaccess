@@ -38,8 +38,6 @@ def download_cell_file(model,
         list_path_data = get_path_cell(model, 
                                       variable,
                                       grid)
-        if not path_out_exists : 
-            os.makedirs(path_out)
         for path_data in list_path_data:
             try:
                 data_area = xr.open_dataset(path_data, **kwargs)
@@ -47,7 +45,8 @@ def download_cell_file(model,
             except:
                 print('Area file failed to save. Trying next one...')
     out_name = f"{variable}_{model}_{grid}.nc"
-    os.makedirs(path_out)
+    if not os.path.isdir(path_out) : 
+        os.makedirs(path_out)
     data_area.to_netcdf(f'{path_out}/{out_name}')
     print(f'    --> File saved: {out_name}')
 

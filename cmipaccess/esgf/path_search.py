@@ -94,21 +94,24 @@ def get_path_CMIP6_data(model,
                         variant_label=realisation,
                         facets='facets',)
             return ctx
-        data_source = ["https://esgf-node.llnl.gov/esg-search",
+        data_source = [
+            # "https://esgf-ui.ceda.ac.uk/esg-search",
+                      
                     #    "https://esgf-data3.ceda.ac.uk/esg-search",
                     #    "https://aims2.llnl.gov/esg-search",
+                       "https://esgf-data.dkrz.de/esg-search" ,
                        "https://esgf-node.ipsl.upmc.fr/esg-search",
                     #    "https://esg1.umr-cnrm.fr/esg-search",
-                       "https://esgf-data.dkrz.de/esg-search" ,
+                        # "https://esgf-node.llnl.gov/esg-search",
                         ]
         for source in data_source:
-            print(source)
+            # print(source)
             conn = SearchConnection(source, distrib=True)
             ctx = get_context(conn)
             hits = ctx.hit_count
-            print(hits)
+            # print(hits)
             if hits > 0:
-                result_datasets = ctx.search()
+                result_datasets = ctx.search(ignore_facet_check=True)
                 all_server_name = [dataset.dataset_id.split('|')[-1] for dataset in result_datasets]
                 if server is None:
                     server_required = all_server_name[0]

@@ -72,6 +72,9 @@ def get_all_detrended_global_time_series(model, experiment, variable, no_parent=
         # Load experiment data
         experiment_data = get_global_time_series(model, experiment, realisation, variable, use_cftime=True, **kwargs)
         if not no_parent:
+            # Propagate variable attribute to global if there is no global attribute
+            if len(experiment_data)==0:
+                experiment_data.attrs = experiment_data[variable].attrs
             # Get parent information and load control data
             parent_experiment_id = experiment_data.attrs['parent_experiment_id']
             parent_variant_label = experiment_data.attrs['parent_variant_label']
