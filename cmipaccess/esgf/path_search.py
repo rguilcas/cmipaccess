@@ -94,17 +94,17 @@ def get_path_CMIP6_data(model,
                         grid_label=grid,
                         latest=latest,
                         variant_label=realisation,
-                        facets='facets',)
+                        facets=facets,)
             return ctx
         data_source = [
             # "https://esgf-ui.ceda.ac.uk/esg-search",
                       
-                    #    "https://esgf-data3.ceda.ac.uk/esg-search",
+                       "https://esgf-data3.ceda.ac.uk/esg-search",
                     #    "https://aims2.llnl.gov/esg-search",
                        "https://esgf-data.dkrz.de/esg-search" ,
                        "https://esgf-node.ipsl.upmc.fr/esg-search",
-                    #    "https://esg1.umr-cnrm.fr/esg-search",
-                        # "https://esgf-node.llnl.gov/esg-search",
+                       "https://esg1.umr-cnrm.fr/esg-search",
+                        "https://esgf-node.llnl.gov/esg-search",
                         ]
         for source in data_source:
             # print(source)
