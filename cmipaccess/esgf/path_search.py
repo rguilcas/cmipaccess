@@ -130,7 +130,7 @@ def get_path_CMIP6_data(model,
                         urls = []
                         for file in files:
                             urls.append(file.opendap_url)
-                            return urls
+                        return urls
             else:
                 continue
         raise ValueError('Data not found on ESGF')
