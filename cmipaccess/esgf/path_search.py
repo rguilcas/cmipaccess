@@ -100,7 +100,7 @@ def get_path_CMIP6_data(model,
         data_source = [
             # "https://esgf-ui.ceda.ac.uk/esg-search",
                       
-                       "https://esgf-data3.ceda.ac.uk/esg-search",
+                    #    "https://esgf-data3.ceda.ac.uk/esg-search",
                     #    "https://aims2.llnl.gov/esg-search",
                        "https://esgf-data.dkrz.de/esg-search" ,
                        "https://esgf-node.ipsl.upmc.fr/esg-search",
