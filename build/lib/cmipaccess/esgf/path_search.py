@@ -1,7 +1,7 @@
 from .esgf_data_access import esgf_search
 import numpy as np
 from pyesgf.search import SearchConnection
-
+import os 
 
 def get_path_CMIP_data(model, 
                        experiment, 
@@ -80,8 +80,9 @@ def get_path_CMIP6_data(model,
         """
         Returns the remote ESGF path to the corresponding datasets they exist on ESGF.
         """
-         # Checks model availability
-        
+        # Hides ESGF pyclient warning
+        os.environ['ESGF_PYCLIENT_NO_FACETS_STAR_WARNING'] = 'no'
+        # Checks model availability
         def get_context(conn):
             facets = 'source_id,member_id,data_node'
             ctx = conn.new_context(
@@ -94,17 +95,17 @@ def get_path_CMIP6_data(model,
                         grid_label=grid,
                         latest=latest,
                         variant_label=realisation,
-                        facets='facets',)
+                        facets=facets,)
             return ctx
         data_source = [
             # "https://esgf-ui.ceda.ac.uk/esg-search",
                       
-                    #    "https://esgf-data3.ceda.ac.uk/esg-search",
+                       "https://esgf-data3.ceda.ac.uk/esg-search",
                     #    "https://aims2.llnl.gov/esg-search",
                        "https://esgf-data.dkrz.de/esg-search" ,
                        "https://esgf-node.ipsl.upmc.fr/esg-search",
-                    #    "https://esg1.umr-cnrm.fr/esg-search",
-                        # "https://esgf-node.llnl.gov/esg-search",
+                       "https://esg1.umr-cnrm.fr/esg-search",
+                        "https://esgf-node.llnl.gov/esg-search",
                         ]
         for source in data_source:
             # print(source)
@@ -115,13 +116,15 @@ def get_path_CMIP6_data(model,
             if hits > 0:
                 result_datasets = ctx.search(ignore_facet_check=True)
                 all_server_name = [dataset.dataset_id.split('|')[-1] for dataset in result_datasets]
+                print(f'Servers available on {source} are:')
+                print('\n'.join(all_server_name))
                 if server is None:
                     server_required = all_server_name[0]
                 else:
                     server_required = [k for k in all_server_name if server in k]
                     if len(server_required) == 0:
                         print(f"Server not available on {source}. Available servers are :")
-                        print(all_server_name)            
+                        print('\n'.join(all_server_name))            
                         continue
                     else:
                         server_required = server_required[0]
