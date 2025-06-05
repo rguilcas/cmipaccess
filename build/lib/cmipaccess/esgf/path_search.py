@@ -67,7 +67,6 @@ def get_path_CMIP_data(model,
 #########################
 #        CMIP6          #
 #########################
-
 def get_path_CMIP6_data(model, 
                         experiment, 
                         realisation, 
@@ -76,7 +75,7 @@ def get_path_CMIP6_data(model,
                         table='Amon',
                         latest=True,
                         server=None,
-                        grid='gn'):        
+                        grid=None):        
         """
         Returns the remote ESGF path to the corresponding datasets they exist on ESGF.
         """
@@ -84,7 +83,7 @@ def get_path_CMIP6_data(model,
         os.environ['ESGF_PYCLIENT_NO_FACETS_STAR_WARNING'] = 'no'
         # Checks model availability
         def get_context(conn):
-            facets = 'source_id,member_id,data_node'
+            facets = 'source_id,member_id,data_node,grid_id'
             ctx = conn.new_context(
                         project='CMIP6',
                         source_id=model,
@@ -98,13 +97,12 @@ def get_path_CMIP6_data(model,
                         facets=facets,)
             return ctx
         data_source = [
-            # "https://esgf-ui.ceda.ac.uk/esg-search",
-                      
-                       "https://esgf-data3.ceda.ac.uk/esg-search",
+            # "https://esgf-ui.ceda.ac.uk/esg-search", 
+                    #    "https://esgf-data3.ceda.ac.uk/esg-search",
                     #    "https://aims2.llnl.gov/esg-search",
                        "https://esgf-data.dkrz.de/esg-search" ,
                        "https://esgf-node.ipsl.upmc.fr/esg-search",
-                       "https://esg1.umr-cnrm.fr/esg-search",
+                    #    "https://esg1.umr-cnrm.fr/esg-search",
                         "https://esgf-node.llnl.gov/esg-search",
                         ]
         for source in data_source:
@@ -117,7 +115,7 @@ def get_path_CMIP6_data(model,
                 result_datasets = ctx.search(ignore_facet_check=True)
                 all_server_name = [dataset.dataset_id.split('|')[-1] for dataset in result_datasets]
                 print(f'Servers available on {source} are:')
-                print('\n'.join(all_server_name))
+                print('     '+'\n     '.join(all_server_name))
                 if server is None:
                     server_required = all_server_name[0]
                 else:
@@ -135,6 +133,14 @@ def get_path_CMIP6_data(model,
                         urls = []
                         for file in files:
                             urls.append(file.opendap_url)
+                        # return urls
+                        if grid is None:
+                            grids = [file.split('/')[13] for file in urls]
+                            if 'gn' in grids:
+                                default_grid='gn'
+                            else:
+                                default_grid=grids[0]
+                            urls = [url for url in urls if default_grid+'_' in url]
                         return urls
             else:
                 continue
